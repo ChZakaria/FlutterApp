@@ -219,6 +219,7 @@ class _LocatairesListState extends State<LocatairesList> {
                 Navigator.of(context).pop(); // Close the dialog
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
+                    backgroundColor: Colors.green,
                     content: Text('Locataire supprimé avec succès'),
                   ),
                 );
