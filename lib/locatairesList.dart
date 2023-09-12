@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:my_web_project/models/locataire.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../api/apiService.dart' as client;
 
 class LocatairesList extends StatefulWidget {

@@ -2,10 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:my_web_project/dashboard.dart';
 import 'package:my_web_project/locatairesList.dart';
 import 'package:my_web_project/models/user.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'api/apiLogin.dart' as login;
 
 class LoginPage extends StatefulWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_web_project/home.dart';
 import 'package:my_web_project/login_page.dart';
+import 'package:my_web_project/models/vehiculesList.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: LoginPage(),
+      home: VehiculeList(),
     );
   }
 }
