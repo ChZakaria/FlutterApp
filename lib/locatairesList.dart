@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:my_web_project/models/locataire.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../api/apiService.dart' as client;
@@ -59,8 +60,16 @@ class _LocatairesListState extends State<LocatairesList> {
   }
 
   void _editlocataire(int index) {
-    // Implement edit functionality here
-    print('Editing locataire at index $index');
+    var locataire = displayedLocataires[index]; // Get the locataire details
+    nomController.text =
+        locataire['nom']; // Populate the form field with the existing nom
+    telephoneController.text = locataire[
+        'telephone']; // Populate the form field with the existing telephone
+    emailController.text =
+        locataire['email']; // Populate the form field with the existing email
+    adresseController.text = locataire[
+        'adresse']; // Populate the form field with the existing adresse
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -87,7 +96,7 @@ class _LocatairesListState extends State<LocatairesList> {
                   TextFormField(
                     controller: telephoneController,
                     decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.person),
+                      prefixIcon: Icon(Icons.phone),
                       labelText: 'Telephone',
                     ),
                     validator: (String? value) {
@@ -100,12 +109,12 @@ class _LocatairesListState extends State<LocatairesList> {
                   TextFormField(
                     controller: emailController,
                     decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.person),
+                      prefixIcon: Icon(Icons.email),
                       labelText: 'Email',
                     ),
                     validator: (String? value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter a email';
+                        return 'Please enter an email';
                       }
                       return null;
                     },
@@ -113,12 +122,12 @@ class _LocatairesListState extends State<LocatairesList> {
                   TextFormField(
                     controller: adresseController,
                     decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.person),
+                      prefixIcon: Icon(Icons.location_on),
                       labelText: 'Adress',
                     ),
                     validator: (String? value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter a adress';
+                        return 'Please enter an address';
                       }
                       return null;
                     },
@@ -132,9 +141,41 @@ class _LocatairesListState extends State<LocatairesList> {
               child: Text('Save'),
               onPressed: () {
                 if (_formKey.currentState?.validate() ?? false) {
-                  // Save the edited locataire details
-                  print('locataire details saved');
-                  Navigator.of(context).pop(); // Close the dialog
+                  // Update the locataire details in the database
+                  var updatedLocataire = {
+                    'id': locataire['id'],
+                    'nom': nomController.text,
+                    'telephone': telephoneController.text,
+                    'email': emailController.text,
+                    'adresse': adresseController.text,
+                  };
+
+                  // Make the API request to update the locataire
+                  var locataireId = displayedLocataires[index]['id'];
+                  client.ApiService.makeApiRequest(
+                    'locataires/$locataireId',
+                    'PUT',
+                    updatedLocataire,
+                  ).then((response) {
+                    // Handle the response from the API
+
+                    setState(() {
+                      displayedLocataires[index] = updatedLocataire;
+                    });
+
+                    print('Locataire details updated');
+
+                    Navigator.of(context).pop(); // Close the dialog
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Details updated'),
+                      ),
+                    );
+                  }).catchError((error) {
+                    // Handle any errors that occur during the API request
+                    print('Error updating locataire details: $error');
+                  });
                 }
               },
             ),
@@ -161,8 +202,10 @@ class _LocatairesListState extends State<LocatairesList> {
             ElevatedButton(
               child: Text('Delete'),
               onPressed: () {
+                var locataireId = displayedLocataires[index]['id'];
+                // Get the ID of the locataire
                 client.ApiService.makeApiRequest(
-                  'locataires/$index',
+                  'locataires/$locataireId', // Append the locataire ID to the API endpoint
                   'DELETE',
                   null,
                 ).then((value) {
@@ -174,6 +217,11 @@ class _LocatairesListState extends State<LocatairesList> {
                   displayedLocataires.removeAt(index);
                 });
                 Navigator.of(context).pop(); // Close the dialog
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Locataire supprimé avec succès'),
+                  ),
+                );
               },
             ),
             TextButton(
@@ -189,8 +237,10 @@ class _LocatairesListState extends State<LocatairesList> {
   }
 
   void _updatelocataire(int index) {
-    // Implement update functionality here
-    print('Updating locataire at index $index');
+    var locataireId =
+        displayedLocataires[index]['id']; // Get the ID of the locataire
+    // Implement update functionality here using the locataireId
+    print('Updating locataire with ID: $locataireId');
   }
 
   void _searchlocataires(String query) {
@@ -232,7 +282,7 @@ class _LocatairesListState extends State<LocatairesList> {
                   TextFormField(
                     controller: telephoneController,
                     decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.person),
+                      prefixIcon: Icon(Icons.phone),
                       labelText: 'Telephone',
                     ),
                     validator: (String? value) {
@@ -245,12 +295,12 @@ class _LocatairesListState extends State<LocatairesList> {
                   TextFormField(
                     controller: emailController,
                     decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.person),
+                      prefixIcon: Icon(Icons.email),
                       labelText: 'Email',
                     ),
                     validator: (String? value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter a email';
+                        return 'Please enter an email';
                       }
                       return null;
                     },
@@ -258,12 +308,12 @@ class _LocatairesListState extends State<LocatairesList> {
                   TextFormField(
                     controller: adresseController,
                     decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.person),
+                      prefixIcon: Icon(Icons.location_on),
                       labelText: 'Adress',
                     ),
                     validator: (String? value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter a adress';
+                        return 'Please enter an address';
                       }
                       return null;
                     },
@@ -278,8 +328,37 @@ class _LocatairesListState extends State<LocatairesList> {
               onPressed: () {
                 if (_formKey.currentState?.validate() ?? false) {
                   // Save the new locataire details
-                  print('New locataire details saved');
-                  Navigator.of(context).pop(); // Close the dialog
+                  var newLocataire = {
+                    'nom': nomController.text,
+                    'telephone': telephoneController.text,
+                    'email': emailController.text,
+                    'adresse': adresseController.text,
+                  };
+
+                  // Make the API request to create a new locataire
+                  client.ApiService.makeApiRequest(
+                    'locataires',
+                    'POST',
+                    newLocataire,
+                  ).then((response) {
+                    // Handle the response from the API
+                    print('New locataire added to the database');
+
+                    // Update the displayedLocataires list with the new locataire details
+                    setState(() {
+                      displayedLocataires.add(newLocataire);
+                    });
+
+                    Navigator.of(context).pop(); // Close the dialog
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Locataire ajouté avec succès'),
+                      ),
+                    );
+                  }).catchError((error) {
+                    // Handle any errors that occur during the API request
+                    print('Error adding new locataire: $error');
+                  });
                 }
               },
             ),
