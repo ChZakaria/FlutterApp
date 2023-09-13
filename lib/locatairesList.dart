@@ -37,9 +37,11 @@ class _LocatairesListState extends State<LocatairesList> {
       null,
     ).then((value) {
       dynamic responseMap = value;
+      print(responseMap);
       var locatairesData = responseMap["locataires"];
       // Create a list of Locataire objects
       List<Locataire> locataires = [];
+      print(locatairesData);
 
       for (var locataireJson in locatairesData) {
         Locataire locataire = Locataire.fromJson(locataireJson);
@@ -219,7 +221,6 @@ class _LocatairesListState extends State<LocatairesList> {
                 Navigator.of(context).pop(); // Close the dialog
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    backgroundColor: Colors.green,
                     content: Text('Locataire supprimé avec succès'),
                   ),
                 );
