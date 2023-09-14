@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import '../../api/apiService.dart' as client;
 import 'models/supplement.dart';
 
-
-
 class SupplementList extends StatefulWidget {
   @override
   _SupplementListState createState() => _SupplementListState();
@@ -13,8 +11,7 @@ class SupplementList extends StatefulWidget {
 
 class _SupplementListState extends State<SupplementList> {
   List<Map<String, dynamic>> supplementList = [];
-    List<Map<String, dynamic>> displayedSupplements = [];
-
+  List<Map<String, dynamic>> displayedSupplements = [];
 
   TextEditingController montantController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
@@ -23,7 +20,9 @@ class _SupplementListState extends State<SupplementList> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   int? selectedIndex = -1;
   String? bearerToken;
+  String? _selectedOption;
 
+  List<String> _options = [];
 
   @override
   void initState() {
@@ -48,6 +47,19 @@ class _SupplementListState extends State<SupplementList> {
         displayedSupplements = List.from(supplementList);
       });
     });
+    client.ApiService.makeApiRequest(
+      'contratsIds',
+      'GET',
+      null,
+    ).then((value) {
+      dynamic responseMap = value;
+
+      var optionsData = responseMap["ids"];
+
+      for (var optionJson in optionsData) {
+        _options.add(optionJson.toString());
+      }
+    });
   }
 
   void _getIndex(int index) {
@@ -57,18 +69,24 @@ class _SupplementListState extends State<SupplementList> {
     });
   }
 
-
-void _searchSupplements(String query) {
+  void _searchSupplements(String query) {
     setState(() {
       displayedSupplements = supplementList
           .where((supplement) =>
               supplement["id"].toLowerCase().contains(query.toLowerCase()) ||
-              supplement["contrat_id"].toLowerCase().contains(query.toLowerCase()) ||
-              supplement["montant"].toLowerCase().contains(query.toLowerCase()) ||
-              supplement["discription"].toLowerCase().contains(query.toLowerCase()))
+              supplement["contrat_id"]
+                  .toLowerCase()
+                  .contains(query.toLowerCase()) ||
+              supplement["montant"]
+                  .toLowerCase()
+                  .contains(query.toLowerCase()) ||
+              supplement["discription"]
+                  .toLowerCase()
+                  .contains(query.toLowerCase()))
           .toList();
     });
   }
+
   void _editSupplement(int index) {
     // Implement edit functionality here
     Supplement supplement = Supplement.fromJson(displayedSupplements[index]);
@@ -225,6 +243,23 @@ void _searchSupplements(String query) {
               key: _formKey,
               child: Column(
                 children: <Widget>[
+                  DropdownButtonFormField<String>(
+                    value: _selectedOption,
+                    items: _options.map((String option) {
+                      return DropdownMenuItem<String>(
+                        value: option,
+                        child: Text(option),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedOption = newValue;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Select an option',
+                    ),
+                  ),
                   TextFormField(
                     controller: montantController,
                     keyboardType: TextInputType.number,

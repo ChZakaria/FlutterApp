@@ -43,6 +43,14 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    emailController.text = "test@test.com";
+    passwordController.text = "hello@world";
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final _form_key = GlobalKey<FormState>();
 

@@ -380,7 +380,7 @@ class _LocatairesListState extends State<LocatairesList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: true,
         actions: [
           Flexible(
             child: Padding(

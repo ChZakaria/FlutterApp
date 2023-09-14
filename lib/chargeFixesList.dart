@@ -35,10 +35,13 @@ class _ChargesFixesListState extends State<ChargesFixesList> {
     ).then((value) {
       dynamic responseMap = value;
       print(responseMap);
-      var chargesFixesData = responseMap["chargesfixes"];
+      var chargesFixesData = responseMap["chargesFixes"];
       // Create a list of ChargeFixe objects
+
+      print("2 print " + chargesFixesData.toString());
+
       List<ChargeFixes> chargesFixes = [];
-      print(responseMap);
+
       for (var chargeFixeJson in chargesFixesData) {
         ChargeFixes chargeFixe = ChargeFixes.fromJson(chargeFixeJson);
         chargesFixes.add(chargeFixe);
@@ -167,36 +170,37 @@ class _ChargesFixesListState extends State<ChargesFixesList> {
           title: Text('Confirm Delete'),
           content: Text('Are you sure you want to delete this charge fixe?'),
           actions: <Widget>[
-            ElevatedButton(
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
               child: Text('Delete'),
               onPressed: () {
                 var chargeFixeId = displayedChargesFixes[index]['id'];
-                // Get the ID of the charge_fixe
                 client.ApiService.makeApiRequest(
-                  'charge-fixes/$chargeFixeId', // Append the charge_fixe ID to the API endpoint
+                  'charge-fixes/$chargeFixeId',
                   'DELETE',
                   null,
                 ).then((value) {
                   dynamic responseMap = value;
-                  print(responseMap);
-                });
+                  // Handle the response from the API
 
-                setState(() {
-                  displayedChargesFixes.removeAt(index);
+                  setState(() {
+                    displayedChargesFixes.removeAt(index);
+                  });
+
+                  print('Charge Fixe deleted');
+
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Charge Fixe deleted'),
+                    ),
+                  );
                 });
-                Navigator.of(context).pop(); // Close the dialog
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    backgroundColor: Colors.green,
-                    content: Text('Charge Fixe supprimé avec succès'),
-                  ),
-                );
-              },
-            ),
-            TextButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
               },
             ),
           ],
@@ -270,47 +274,40 @@ class _ChargesFixesListState extends State<ChargesFixesList> {
             ),
           ),
           actions: <Widget>[
-            ElevatedButton(
-              child: Text('Save'),
-              onPressed: () {
-                if (_formKey.currentState?.validate() ?? false) {
-                  // Save the new charge_fixe details
-                  var newChargeFixe = {
-                    'montant': double.parse(montantController.text),
-                    'description': descriptionController.text,
-                  };
-
-                  // Make the API request to create a new charge_fixe
-                  client.ApiService.makeApiRequest(
-                    'charge-fixes',
-                    'POST',
-                    newChargeFixe,
-                  ).then((response) {
-                    // Handle the response from the API
-                    print('New charge_fixe added to the database');
-
-                    // Update the displayedChargesFixes list with the new charge_fixe details
-                    setState(() {
-                      displayedChargesFixes.add(newChargeFixe);
-                    });
-
-                    Navigator.of(context).pop(); // Close the dialog
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Charge Fixe ajouté avec succès'),
-                      ),
-                    );
-                  }).catchError((error) {
-                    // Handle any errors that occur during the API request
-                    print('Error adding new charge_fixe: $error');
-                  });
-                }
-              },
-            ),
             TextButton(
               child: Text('Cancel'),
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Save'),
+              onPressed: () {
+                var newChargeFixe = {
+                  'montant': double.parse(montantController.text),
+                  'description': descriptionController.text,
+                };
+
+                client.ApiService.makeApiRequest(
+                  'charge-fixes',
+                  'POST',
+                  newChargeFixe,
+                ).then((response) {
+                  setState(() {
+                    displayedChargesFixes.add(newChargeFixe);
+                  });
+
+                  print('New charge fixe added to the database');
+
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Charge Fixe added successfully'),
+                    ),
+                  );
+                }).catchError((error) {
+                  print('Error adding new charge fixe: $error');
+                });
               },
             ),
           ],
