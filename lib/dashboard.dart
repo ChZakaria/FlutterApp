@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_web_project/chargeFixesList.dart';
+import 'package:my_web_project/contratsList.dart';
 import 'package:my_web_project/fournisseursList.dart';
 import 'package:my_web_project/intermediairesList.dart';
 import 'package:my_web_project/locatairesList.dart';
@@ -93,6 +94,10 @@ class Dashboard extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   // Handle contrats button press
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ContratList()),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.orange,
