@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../api/apiService.dart' as client;
 import 'models/contrat.dart';
+import 'package:http/http.dart' as http;
 
 class ContratList extends StatefulWidget {
   @override
@@ -34,9 +35,19 @@ class _ContratListState extends State<ContratList> {
   int? selectedIndex = -1;
   String? bearerToken;
 
+  String? _selectedLocataire;
+  List<String> _locataires = [];
+
+  String? _selectedVehicule;
+  List<String> _vehicules = [];
+
+  String? _selectedIntermediaire;
+  List<String> _intermediaire = [];
+
   @override
   void initState() {
     super.initState();
+
     client.ApiService.makeApiRequest(
       'contrats',
       'GET',
@@ -52,10 +63,48 @@ class _ContratListState extends State<ContratList> {
         contrats.add(contrat);
         contratList.add(contratJson);
       }
-
       setState(() {
         displayedContrats = List.from(contratList);
       });
+    });
+    client.ApiService.makeApiRequest(
+      'contratsLocataires',
+      'GET',
+      null,
+    ).then((value) {
+      dynamic responseMap = value;
+
+      var optionsData = responseMap["locatairesNames"];
+
+      for (var optionJson in optionsData) {
+        _locataires.add(optionJson.toString());
+      }
+    });
+    client.ApiService.makeApiRequest(
+      'contratsVehicules',
+      'GET',
+      null,
+    ).then((value) {
+      dynamic responseMap = value;
+
+      var optionsData = responseMap["vehiculesCarteGrise"];
+
+      for (var optionJson in optionsData) {
+        _vehicules.add(optionJson.toString());
+      }
+    });
+    client.ApiService.makeApiRequest(
+      'contratsIntermidiares',
+      'GET',
+      null,
+    ).then((value) {
+      dynamic responseMap = value;
+
+      var optionsData = responseMap["intermediaireNames"];
+
+      for (var optionJson in optionsData) {
+        _intermediaire.add(optionJson.toString());
+      }
     });
   }
 
@@ -94,31 +143,39 @@ class _ContratListState extends State<ContratList> {
               key: _formKey,
               child: Column(
                 children: <Widget>[
-                  TextFormField(
-                    controller: locataireIdController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Locataire ID',
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a locataire ID';
-                      }
-                      return null;
+                  DropdownButtonFormField<String>(
+                    value: _selectedLocataire,
+                    items: _locataires.map((String locataire) {
+                      return DropdownMenuItem<String>(
+                        value: locataire,
+                        child: Text(locataire),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedLocataire = newValue;
+                      });
                     },
+                    decoration: InputDecoration(
+                      labelText: 'Select a locataire',
+                    ),
                   ),
-                  TextFormField(
-                    controller: vehiculeIdController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Vehicule ID',
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a vehicule ID';
-                      }
-                      return null;
+                  DropdownButtonFormField<String>(
+                    value: _selectedVehicule,
+                    items: _vehicules.map((String vehicule) {
+                      return DropdownMenuItem<String>(
+                        value: vehicule,
+                        child: Text(vehicule),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedVehicule = newValue;
+                      });
                     },
+                    decoration: InputDecoration(
+                      labelText: 'Select a vehicule',
+                    ),
                   ),
                   TextFormField(
                     controller: dateLocationController,
@@ -208,17 +265,22 @@ class _ContratListState extends State<ContratList> {
                       return null;
                     },
                   ),
-                  TextFormField(
-                    controller: intermediaireController,
-                    decoration: InputDecoration(
-                      labelText: 'Intermediaire',
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter an intermediaire';
-                      }
-                      return null;
+                  DropdownButtonFormField<String>(
+                    value: _selectedIntermediaire,
+                    items: _intermediaire.map((String intermediaire) {
+                      return DropdownMenuItem<String>(
+                        value: intermediaire,
+                        child: Text(intermediaire),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedIntermediaire = newValue;
+                      });
                     },
+                    decoration: InputDecoration(
+                      labelText: 'Select an intermediaire',
+                    ),
                   ),
                   TextFormField(
                     controller: lieuDepartController,
@@ -436,31 +498,39 @@ class _ContratListState extends State<ContratList> {
               key: _formKey,
               child: Column(
                 children: <Widget>[
-                  TextFormField(
-                    controller: locataireIdController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Locataire ID',
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a locataire ID';
-                      }
-                      return null;
+                  DropdownButtonFormField<String>(
+                    value: _selectedLocataire,
+                    items: _locataires.map((String locataire) {
+                      return DropdownMenuItem<String>(
+                        value: locataire,
+                        child: Text(locataire),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedLocataire = newValue;
+                      });
                     },
+                    decoration: InputDecoration(
+                      labelText: 'Select a locataire',
+                    ),
                   ),
-                  TextFormField(
-                    controller: vehiculeIdController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Vehicule ID',
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a vehicule ID';
-                      }
-                      return null;
+                  DropdownButtonFormField<String>(
+                    value: _selectedVehicule,
+                    items: _vehicules.map((String vehicule) {
+                      return DropdownMenuItem<String>(
+                        value: vehicule,
+                        child: Text(vehicule),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedVehicule = newValue;
+                      });
                     },
+                    decoration: InputDecoration(
+                      labelText: 'Select a vehicule',
+                    ),
                   ),
                   TextFormField(
                     controller: dateLocationController,

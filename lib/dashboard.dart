@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_web_project/chargeFixesList.dart';
 import 'package:my_web_project/contratsList.dart';
+import 'package:my_web_project/entretienList.dart';
 import 'package:my_web_project/fournisseursList.dart';
 import 'package:my_web_project/intermediairesList.dart';
 import 'package:my_web_project/locatairesList.dart';
@@ -312,6 +313,41 @@ class Dashboard extends StatelessWidget {
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.amber,
+                  padding: EdgeInsets.all(8.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  elevation: 5,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.settings,
+                      size: 32.0,
+                      color: Colors.white, // Text and icon color
+                    ), // Smaller icon
+                    SizedBox(height: 4.0), // Smaller gap
+                    Text(
+                      'Entretien',
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        color: Colors.white, // Text color
+                      ),
+                    ), // Smaller text
+                  ],
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  // Handle locataires button press
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => EntretienList()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.cyan,
                   padding: EdgeInsets.all(8.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),

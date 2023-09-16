@@ -104,6 +104,23 @@ class _SupplementListState extends State<SupplementList> {
               key: _formKey,
               child: Column(
                 children: <Widget>[
+                  DropdownButtonFormField<String>(
+                    value: _selectedOption,
+                    items: _options.map((String option) {
+                      return DropdownMenuItem<String>(
+                        value: option,
+                        child: Text(option),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedOption = newValue;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Select an option',
+                    ),
+                  ),
                   TextFormField(
                     controller: montantController,
                     keyboardType: TextInputType.number,
