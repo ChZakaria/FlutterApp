@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:my_web_project/chargeFixesList.dart';
 import 'package:my_web_project/contratsList.dart';
-import 'package:my_web_project/entretienList.dart';
 import 'package:my_web_project/fournisseursList.dart';
 import 'package:my_web_project/intermediairesList.dart';
 import 'package:my_web_project/locatairesList.dart';
 import 'package:my_web_project/reglementsList.dart';
-import 'package:my_web_project/supplementsList.dart';
 import 'package:my_web_project/vehiculeList.dart';
+import 'package:my_web_project/supplementsList.dart';
+import 'package:my_web_project/entretienList.dart';
 
 class Dashboard extends StatelessWidget {
   @override
@@ -325,22 +325,22 @@ class Dashboard extends StatelessWidget {
                     Icon(
                       Icons.settings,
                       size: 32.0,
-                      color: Colors.white, // Text and icon color
-                    ), // Smaller icon
-                    SizedBox(height: 4.0), // Smaller gap
+                      color: Colors.white,
+                    ),
+                    SizedBox(height: 4.0),
                     Text(
-                      'Entretien',
+                      'Supplements',
                       style: TextStyle(
                         fontSize: 14.0,
-                        color: Colors.white, // Text color
+                        color: Colors.white,
                       ),
-                    ), // Smaller text
+                    ),
                   ],
                 ),
               ),
               ElevatedButton(
                 onPressed: () {
-                  // Handle locataires button press
+                  // Handle entretien button press
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => EntretienList()),
@@ -364,7 +364,7 @@ class Dashboard extends StatelessWidget {
                     ),
                     SizedBox(height: 4.0),
                     Text(
-                      'Supplements',
+                      'Entretien',
                       style: TextStyle(
                         fontSize: 14.0,
                         color: Colors.white,

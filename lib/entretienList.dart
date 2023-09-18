@@ -28,6 +28,9 @@ class _EntretienListState extends State<EntretienList> {
   int? selectedIndex = -1;
   String? bearerToken;
 
+  String? _selectedVehicule;
+  List<String> _vehicules = [];
+
   @override
   void initState() {
     super.initState();
@@ -50,6 +53,21 @@ class _EntretienListState extends State<EntretienList> {
       setState(() {
         displayedEntretiens = List.from(entretienList);
       });
+    });
+
+    // vehicules liste
+    client.ApiService.makeApiRequest(
+      'entretiensVehicules',
+      'GET',
+      null,
+    ).then((value) {
+      dynamic responseMap = value;
+
+      var optionsData = responseMap["vehiculesCarteGrise"];
+
+      for (var optionJson in optionsData) {
+        _vehicules.add(optionJson.toString());
+      }
     });
   }
 
@@ -82,17 +100,22 @@ class _EntretienListState extends State<EntretienList> {
               key: _formKey,
               child: Column(
                 children: <Widget>[
-                  TextFormField(
-                    controller: vehiculeIdController,
-                    decoration: InputDecoration(
-                      labelText: 'Vehicule',
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a Vehicule';
-                      }
-                      return null;
+                  DropdownButtonFormField<String>(
+                    value: _selectedVehicule,
+                    items: _vehicules.map((String vehicule) {
+                      return DropdownMenuItem<String>(
+                        value: vehicule,
+                        child: Text(vehicule),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedVehicule = newValue;
+                      });
                     },
+                    decoration: InputDecoration(
+                      labelText: 'Select a vehicule',
+                    ),
                   ),
                   TextFormField(
                     controller: operationController,
@@ -207,11 +230,11 @@ class _EntretienListState extends State<EntretienList> {
                 if (_formKey.currentState?.validate() ?? false) {
                   int id = displayedEntretiens[index]['id'];
                   String operation = operationController.text.toString();
-                  String frais = fraisController.text.toString();
+                  String? frais = fraisController.text.toString();
                   String date = dateController.text.toString();
                   String kmM = kmMController.text.toString();
                   String kmP = kmPController.text.toString();
-                  String montants = montantsController.text.toString();
+                  double montants = double.parse(montantsController.text);
                   String mavertirAvant =
                       mavertirAvantController.text.toString();
                   String observation = observationController.text.toString();
@@ -224,7 +247,7 @@ class _EntretienListState extends State<EntretienList> {
                     date: DateTime.parse(date),
                     kmM: int.parse(kmM),
                     kmP: int.parse(kmP),
-                    montants: double.parse(montants),
+                    montants: double.parse(montants.toString()),
                     mavertirAvant: int.parse(mavertirAvant),
                     observation: observation,
                   );
@@ -320,17 +343,22 @@ class _EntretienListState extends State<EntretienList> {
               key: _formKey,
               child: Column(
                 children: <Widget>[
-                  TextFormField(
-                    controller: vehiculeIdController,
-                    decoration: InputDecoration(
-                      labelText: 'Vehicule',
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a vehicule';
-                      }
-                      return null;
+                  DropdownButtonFormField<String>(
+                    value: _selectedVehicule,
+                    items: _vehicules.map((String vehicule) {
+                      return DropdownMenuItem<String>(
+                        value: vehicule,
+                        child: Text(vehicule),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedVehicule = newValue;
+                      });
                     },
+                    decoration: InputDecoration(
+                      labelText: 'Select a vehicule',
+                    ),
                   ),
                   TextFormField(
                     controller: operationController,
@@ -561,6 +589,7 @@ class _EntretienListState extends State<EntretienList> {
             editEntretien: _editEntretien,
             deleteEntretien: _deleteEntretien,
             getIndex: _getIndex,
+            vehicules: _vehicules,
             selectedIndex: selectedIndex),
       ),
       floatingActionButton: FloatingActionButton(
@@ -573,6 +602,7 @@ class _EntretienListState extends State<EntretienList> {
 
 class MyDataTableSource extends DataTableSource {
   final List<Map<String, dynamic>> entretiens;
+  final List<String> vehicules; // Add this line
   final Function(int) editEntretien;
   final Function(int) deleteEntretien;
   final Function(int) getIndex;
@@ -584,11 +614,17 @@ class MyDataTableSource extends DataTableSource {
     required this.deleteEntretien,
     required this.getIndex,
     required this.selectedIndex,
+    required this.vehicules,
   });
 
   @override
   DataRow getRow(int index) {
     final entretien = entretiens[index];
+    final vehiculeId = entretien['vehicule_id'].toString();
+    final vehiculeCarteGrise = vehicules.firstWhere(
+        (_vehicule) => _vehicule.startsWith(vehiculeId),
+        orElse: () => '');
+
     return DataRow(
       onSelectChanged: (bool? selected) {
         getIndex(index);
@@ -596,14 +632,14 @@ class MyDataTableSource extends DataTableSource {
       selected: selectedIndex == index ? true : false,
       cells: [
         DataCell(Text(entretien['id'].toString())),
-        DataCell(Text(entretien['vehicule_id'].toString())),
+        DataCell(Text(vehiculeCarteGrise)), // Use the vehicle carte_grise here
         DataCell(Text(entretien['operation'])),
         DataCell(Text(entretien['frais'])),
         DataCell(Text(entretien['date'])),
-        DataCell(Text(entretien['km_m'])),
-        DataCell(Text(entretien['km_p'])),
-        DataCell(Text(entretien['montants'])),
-        DataCell(Text(entretien['mavertir_avant'])),
+        DataCell(Text(entretien['km_m'].toString())),
+        DataCell(Text(entretien['km_p'].toString())),
+        DataCell(Text(entretien['montants'].toString())),
+        DataCell(Text(entretien['mavertir_avant'].toString())),
         DataCell(Text(entretien['observation'])),
         DataCell(
           Row(
@@ -633,5 +669,5 @@ class MyDataTableSource extends DataTableSource {
   int get rowCount => entretiens.length;
 
   @override
-  int get selectedRowCount => 0;
+  int get selectedRowCount => selectedIndex != null ? 1 : 0;
 }

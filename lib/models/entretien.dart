@@ -1,14 +1,14 @@
 class Entretien {
-  final int id;
-  final int vehiculeId;
-  final String operation;
-  final String frais;
-  final DateTime date;
-  final int kmM;
-  final int kmP;
-  final double montants;
-  final int mavertirAvant;
-  final String observation;
+  int id;
+  int vehiculeId;
+  String? operation;
+  String? frais;
+  DateTime date;
+  int kmM;
+  int kmP;
+  double montants;
+  int mavertirAvant;
+  String observation;
 
   Entretien({
     required this.id,
@@ -32,7 +32,7 @@ class Entretien {
       date: DateTime.parse(json['date']),
       kmM: json['km_m'],
       kmP: json['km_p'],
-      montants: json['montants'],
+      montants: double.parse(json['montants']),
       mavertirAvant: json['mavertir_avant'],
       observation: json['observation'],
     );
