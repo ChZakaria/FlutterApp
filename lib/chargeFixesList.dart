@@ -16,8 +16,14 @@ class _ChargesFixesListState extends State<ChargesFixesList> {
   List<Map<String, dynamic>> displayedChargesFixes = [];
 
   TextEditingController searchController = TextEditingController();
-  TextEditingController montantController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
+  final TextEditingController idController = TextEditingController();
+  final TextEditingController vehiculeIdController = TextEditingController();
+  final TextEditingController montantController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController fournisseurController = TextEditingController();
+  final TextEditingController dateDebutController = TextEditingController();
+  final TextEditingController dateFinController = TextEditingController();
+  final TextEditingController mavertirAvantController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -63,11 +69,15 @@ class _ChargesFixesListState extends State<ChargesFixesList> {
   void _editChargeFixe(int index) {
     var chargeFixe =
         displayedChargesFixes[index]; // Get the charge_fixe details
-    montantController.text = chargeFixe['montant']
-        .toString(); // Populate the form field with the existing montant
-    descriptionController.text = chargeFixe[
-        'description']; // Populate the form field with the existing description
+    vehiculeIdController.text = chargeFixe['vehicule_id'].toString();
+    montantController.text = chargeFixe['montant'].toString();
+    descriptionController.text = chargeFixe['description'].toString();
+    fournisseurController.text = chargeFixe['fournisseur'].toString();
+    dateDebutController.text = chargeFixe['date_debut'].toString();
+    dateFinController.text = chargeFixe['date_fin'].toString();
+    mavertirAvantController.text = chargeFixe['mavertir_avant'].toString();
 
+   
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -78,6 +88,20 @@ class _ChargesFixesListState extends State<ChargesFixesList> {
               key: _formKey,
               child: Column(
                 children: <Widget>[
+                  TextFormField(
+                    controller: vehiculeIdController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.car_crash_outlined),
+                      labelText: 'Vehicle ID',
+                    ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a Vehicle ID';
+                      }
+                      return null;
+                    },
+                  ),
                   TextFormField(
                     controller: montantController,
                     keyboardType: TextInputType.number,
@@ -105,6 +129,61 @@ class _ChargesFixesListState extends State<ChargesFixesList> {
                       return null;
                     },
                   ),
+                  TextFormField(
+                    controller: fournisseurController,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.business),
+                      labelText: 'Fournisseur',
+                    ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a fournisseur';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    controller: dateDebutController,
+                    keyboardType: TextInputType.datetime,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.calendar_today),
+                      labelText: 'Date Debut',
+                    ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a date';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    controller: dateFinController,
+                    keyboardType: TextInputType.datetime,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.calendar_today),
+                      labelText: 'Date Fin',
+                    ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a date';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    controller: mavertirAvantController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.notification_important),
+                      labelText: 'Mavertir Avant',
+                    ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter mavertir avant';
+                      }
+                      return null;
+                    },
+                  ),
                 ],
               ),
             ),
@@ -115,10 +194,22 @@ class _ChargesFixesListState extends State<ChargesFixesList> {
               onPressed: () {
                 if (_formKey.currentState?.validate() ?? false) {
                   // Update the charge_fixe details in the database
+                  String vehiculeId = vehiculeIdController.text;
+                  String montant = montantController.text;
+                  String description = descriptionController.text;
+                  String fournisseur = fournisseurController.text;
+                  String dateDebut = dateDebutController.text;
+                  String dateFin = dateFinController.text;
+                  String mavertirAvant = mavertirAvantController.text;
+
                   var updatedChargeFixe = {
-                    'id': chargeFixe['id'],
-                    'montant': double.parse(montantController.text),
-                    'description': descriptionController.text,
+                    'vehicule_id': int.parse(vehiculeId),
+                    'montant': double.parse(montant),
+                    'description': description,
+                    'fournisseur': fournisseur,
+                    'date_debut': dateDebut,
+                    'date_fin': dateFin,
+                    'mavertir_avant': int.parse(mavertirAvant),
                   };
 
                   // Make the API request to update the charge_fixe
@@ -243,6 +334,20 @@ class _ChargesFixesListState extends State<ChargesFixesList> {
               child: Column(
                 children: <Widget>[
                   TextFormField(
+                    controller: vehiculeIdController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.car_crash_outlined),
+                      labelText: 'Vehicle ID',
+                    ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a Vehicle ID';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
                     controller: montantController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
@@ -269,6 +374,61 @@ class _ChargesFixesListState extends State<ChargesFixesList> {
                       return null;
                     },
                   ),
+                  TextFormField(
+                    controller: fournisseurController,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.business),
+                      labelText: 'Fournisseur',
+                    ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a fournisseur';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    controller: dateDebutController,
+                    keyboardType: TextInputType.datetime,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.calendar_today),
+                      labelText: 'Date Debut',
+                    ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a date';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    controller: dateFinController,
+                    keyboardType: TextInputType.datetime,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.calendar_today),
+                      labelText: 'Date Fin',
+                    ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a date';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    controller: mavertirAvantController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.notification_important),
+                      labelText: 'Mavertir Avant',
+                    ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter mavertir avant';
+                      }
+                      return null;
+                    },
+                  ),
                 ],
               ),
             ),
@@ -283,9 +443,24 @@ class _ChargesFixesListState extends State<ChargesFixesList> {
             TextButton(
               child: Text('Save'),
               onPressed: () {
+                // Form is valid, process the data
+
+                String vehiculeId = vehiculeIdController.text;
+                String montant = montantController.text;
+                String description = descriptionController.text;
+                String fournisseur = fournisseurController.text;
+                String dateDebut = dateDebutController.text;
+                String dateFin = dateFinController.text;
+                String mavertirAvant = mavertirAvantController.text;
+
                 var newChargeFixe = {
-                  'montant': double.parse(montantController.text),
-                  'description': descriptionController.text,
+                  'vehicule_id': int.parse(vehiculeId),
+                  'montant': double.parse(montant),
+                  'description': description,
+                  'fournisseur': fournisseur,
+                  'date_debut': dateDebut,
+                  'date_fin': dateFin,
+                  'mavertir_avant': int.parse(mavertirAvant),
                 };
 
                 client.ApiService.makeApiRequest(
@@ -293,6 +468,7 @@ class _ChargesFixesListState extends State<ChargesFixesList> {
                   'POST',
                   newChargeFixe,
                 ).then((response) {
+                  print(response);
                   setState(() {
                     displayedChargesFixes.add(newChargeFixe);
                   });
@@ -361,8 +537,15 @@ class _ChargesFixesListState extends State<ChargesFixesList> {
           ),
         ],
         columns: const [
+          DataColumn(label: Text('id')),
+          DataColumn(label: Text('Vehicule Id')),
           DataColumn(label: Text('Montant')),
           DataColumn(label: Text('Description')),
+          DataColumn(label: Text('Fournisseur')),
+          DataColumn(label: Text('Date debut')),
+          DataColumn(label: Text('Date fin')),
+          DataColumn(label: Text("m.avant")),
+          DataColumn(label: Text("Cree le")),
           DataColumn(label: Text('Actions')),
         ],
         source: MyDataTableSource(
@@ -407,8 +590,15 @@ class MyDataTableSource extends DataTableSource {
       },
       selected: selectedIndex == index ? true : false,
       cells: [
+        DataCell(Text(chargeFixe['id'].toString())),
+        DataCell(Text(chargeFixe['vehicule_id'].toString())),
         DataCell(Text(chargeFixe['montant'].toString())),
         DataCell(Text(chargeFixe['description'])),
+        DataCell(Text(chargeFixe['fournisseur'])),
+        DataCell(Text(chargeFixe['date_debut'].toString())),
+        DataCell(Text(chargeFixe['date_fin'].toString())),
+        DataCell(Text(chargeFixe['mavertir_avant'].toString())),
+        DataCell(Text(chargeFixe['cree_le'].toString())),
         DataCell(Row(
           children: [
             IconButton(
