@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import '../../api/apiService.dart' as client;
-import 'models/fournisseur.dart';
+import '../models/fournisseur.dart';
 
 class FournisseurList extends StatefulWidget {
   @override

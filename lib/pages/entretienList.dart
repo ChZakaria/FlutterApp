@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import '../../api/apiService.dart' as client;
-import 'models/entretien.dart';
+import '../models/entretien.dart';
 
 class EntretienList extends StatefulWidget {
   @override

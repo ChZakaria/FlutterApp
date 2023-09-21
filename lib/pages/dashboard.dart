@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:my_web_project/chargeFixesList.dart';
-import 'package:my_web_project/contratsList.dart';
-import 'package:my_web_project/fournisseursList.dart';
-import 'package:my_web_project/intermediairesList.dart';
-import 'package:my_web_project/locatairesList.dart';
-import 'package:my_web_project/reglementsList.dart';
-import 'package:my_web_project/vehiculeList.dart';
-import 'package:my_web_project/supplementsList.dart';
-import 'package:my_web_project/entretienList.dart';
+
+import 'package:my_web_project/routes/route.dart' as route;
 
 class Dashboard extends StatelessWidget {
+
+  // use this to push to name route defined in route file
+  pushToRoute(BuildContext context, routeName) {
+    Navigator.pushNamed(
+      context,
+      routeName,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,10 +62,7 @@ class Dashboard extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   // Handle locataires button press
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LocatairesList()),
-                  );
+                  pushToRoute(context,route.locatairesListPage);
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.green,
@@ -95,10 +94,7 @@ class Dashboard extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   // Handle contrats button press
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ContratList()),
-                  );
+                  pushToRoute(context,route.contratsListPage);
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.orange,
@@ -130,10 +126,7 @@ class Dashboard extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   // Handle vehicules button press
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => VehiculeList()),
-                  );
+                  pushToRoute(context,route.vehiculeListPage);
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.red,
@@ -165,10 +158,7 @@ class Dashboard extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   // Handle reglements button press
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ReglementsList()),
-                  );
+                  pushToRoute(context,route.regelementsListPage);
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.purple,
@@ -200,10 +190,7 @@ class Dashboard extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   // Handle charge_fixes button press
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ChargesFixesList()),
-                  );
+                  pushToRoute(context,route.chargeFixesListPage);
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.yellow,
@@ -235,10 +222,7 @@ class Dashboard extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   // Handle fournisseurs button press
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => FournisseurList()),
-                  );
+                   pushToRoute(context,route.fournisseursListPage);
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.teal,
@@ -270,11 +254,7 @@ class Dashboard extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   // Handle intermediaires button press
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => IntermediairesList()),
-                  );
+                   pushToRoute(context,route.intermidiairesListPage);
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.indigo,
@@ -306,10 +286,7 @@ class Dashboard extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   // Handle supplements button press
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SupplementList()),
-                  );
+                  pushToRoute(context,route.supplementsListPage);
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.amber,
@@ -341,10 +318,7 @@ class Dashboard extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   // Handle entretien button press
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => EntretienList()),
-                  );
+                  pushToRoute(context,route.entretiensListPage);
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.cyan,

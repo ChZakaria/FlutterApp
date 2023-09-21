@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import '../../api/apiService.dart' as client;
-import 'models/supplement.dart';
+import '../models/supplement.dart';
 
 class SupplementList extends StatefulWidget {
   @override

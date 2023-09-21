@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../api/apiService.dart' as client;
-import 'models/chargeFixes.dart';
+import '../../../api/apiService.dart' as client;
+import '../models/chargeFixes.dart';
 
 class ChargesFixesList extends StatefulWidget {
   @override
