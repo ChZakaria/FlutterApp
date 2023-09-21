@@ -3,12 +3,119 @@ import 'package:flutter/material.dart';
 import 'package:my_web_project/routes/route.dart' as route;
 
 class Dashboard extends StatelessWidget {
+  //
+  //
+  //
+  //
+  //
+  //
 
   // use this to push to name route defined in route file
   pushToRoute(BuildContext context, routeName) {
     Navigator.pushNamed(
       context,
       routeName,
+    );
+  }
+
+  /*        ------- create a list of buttons to seed the GridView
+            icon
+            Color
+            name
+            route name
+   */
+
+  var listOfButtons = [
+    {
+      "icon": Icons.calendar_month_outlined,
+      "color": Colors.purpleAccent,
+      "name": "Reservations",
+      "route": route.chargeFixesListPage
+    },
+    {
+      "icon": Icons.person,
+      "color": Colors.red,
+      "name": "Locataires",
+      "route": route.locatairesListPage
+    },
+    {
+      "icon": Icons.description_outlined,
+      "color": Colors.lightGreen,
+      "name": "Contrats",
+      "route": route.contratsListPage
+    },
+    {
+      "icon": Icons.car_repair_outlined,
+      "color": Colors.pink,
+      "name": "Entretiens",
+      "route": route.entretiensListPage
+    },
+    {
+      "icon": Icons.factory_outlined,
+      "color": Colors.limeAccent,
+      "name": "Fournisseurs",
+      "route": route.fournisseursListPage
+    },
+    {
+      "icon": Icons.support_agent,
+      "color": Colors.indigo,
+      "name": "Intermidiaires",
+      "route": route.intermidiairesListPage
+    },
+    {
+      "icon": Icons.receipt,
+      "color": Colors.lightBlue,
+      "name": "Regelements",
+      "route": route.regelementsListPage
+    },
+    {
+      "icon": Icons.receipt_long_outlined,
+      "color": Colors.deepPurpleAccent,
+      "name": "Supplements",
+      "route": route.supplementsListPage
+    },
+    {
+      "icon": Icons.directions_car_filled_outlined,
+      "color": Colors.orange,
+      "name": "Vehicules",
+      "route": route.vehiculeListPage
+    },
+  ];
+
+  // method returns Elevated button to avoid repetitive code
+
+  ElevatedButton _gridButton(icon, color, name, route, context) {
+    return ElevatedButton(
+      onPressed: () {
+        // Handle  button press
+        pushToRoute(context, route);
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        padding: const EdgeInsets.all(8.0), // Smaller padding
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        elevation: 5, // Add elevation
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            size: 32.0,
+            color: Colors.white, // Text and icon color
+          ), // Smaller icon
+          const SizedBox(height: 4.0), // Smaller gap
+          Text(
+            name,
+            style: TextStyle(
+              fontSize: 14.0,
+              color: Colors.white, // Text color
+            ),
+          ), // Smaller text
+        ],
+      ),
     );
   }
 
@@ -28,325 +135,8 @@ class Dashboard extends StatelessWidget {
             crossAxisSpacing: 16.0,
             childAspectRatio: 1.0, // Adjust the aspect ratio as needed
             children: [
-              ElevatedButton(
-                onPressed: () {
-                  // Handle reservations button press
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.blue,
-                  padding: EdgeInsets.all(8.0), // Smaller padding
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  elevation: 5, // Add elevation
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.calendar_today,
-                      size: 32.0,
-                      color: Colors.white, // Text and icon color
-                    ), // Smaller icon
-                    SizedBox(height: 4.0), // Smaller gap
-                    Text(
-                      'Reservations',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        color: Colors.white, // Text color
-                      ),
-                    ), // Smaller text
-                  ],
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // Handle locataires button press
-                  pushToRoute(context,route.locatairesListPage);
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.green,
-                  padding: EdgeInsets.all(8.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  elevation: 5,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.person,
-                      size: 32.0,
-                      color: Colors.white,
-                    ),
-                    SizedBox(height: 4.0),
-                    Text(
-                      'Locataires',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // Handle contrats button press
-                  pushToRoute(context,route.contratsListPage);
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.orange,
-                  padding: EdgeInsets.all(8.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  elevation: 5,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.description,
-                      size: 32.0,
-                      color: Colors.white,
-                    ),
-                    SizedBox(height: 4.0),
-                    Text(
-                      'Contrats',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // Handle vehicules button press
-                  pushToRoute(context,route.vehiculeListPage);
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.red,
-                  padding: EdgeInsets.all(8.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  elevation: 5,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.directions_car,
-                      size: 32.0,
-                      color: Colors.white,
-                    ),
-                    SizedBox(height: 4.0),
-                    Text(
-                      'Vehicules',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // Handle reglements button press
-                  pushToRoute(context,route.regelementsListPage);
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.purple,
-                  padding: EdgeInsets.all(8.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  elevation: 5,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.payment,
-                      size: 32.0,
-                      color: Colors.white,
-                    ),
-                    SizedBox(height: 4.0),
-                    Text(
-                      'Reglements',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // Handle charge_fixes button press
-                  pushToRoute(context,route.chargeFixesListPage);
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.yellow,
-                  padding: EdgeInsets.all(8.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  elevation: 5,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.attach_money,
-                      size: 32.0,
-                      color: Colors.white,
-                    ),
-                    SizedBox(height: 4.0),
-                    Text(
-                      'Charge Fixes',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // Handle fournisseurs button press
-                   pushToRoute(context,route.fournisseursListPage);
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.teal,
-                  padding: EdgeInsets.all(8.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  elevation: 5,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.business,
-                      size: 32.0,
-                      color: Colors.white,
-                    ),
-                    SizedBox(height: 4.0),
-                    Text(
-                      'Fournisseurs',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // Handle intermediaires button press
-                   pushToRoute(context,route.intermidiairesListPage);
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.indigo,
-                  padding: EdgeInsets.all(8.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  elevation: 5,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.people,
-                      size: 32.0,
-                      color: Colors.white,
-                    ),
-                    SizedBox(height: 4.0),
-                    Text(
-                      'Intermediaires',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // Handle supplements button press
-                  pushToRoute(context,route.supplementsListPage);
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.amber,
-                  padding: EdgeInsets.all(8.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  elevation: 5,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.settings,
-                      size: 32.0,
-                      color: Colors.white,
-                    ),
-                    SizedBox(height: 4.0),
-                    Text(
-                      'Supplements',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // Handle entretien button press
-                  pushToRoute(context,route.entretiensListPage);
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.cyan,
-                  padding: EdgeInsets.all(8.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  elevation: 5,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.add,
-                      size: 32.0,
-                      color: Colors.white,
-                    ),
-                    SizedBox(height: 4.0),
-                    Text(
-                      'Entretien',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              ...listOfButtons.map((e) => _gridButton(
+                  e["icon"], e["color"], e["name"], e["route"], context))
             ],
           ),
         ),
