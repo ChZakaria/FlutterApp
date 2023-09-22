@@ -28,8 +28,8 @@ class _EntretienListState extends State<EntretienList> {
   int? selectedIndex = -1;
   String? bearerToken;
 
-  String? _selectedVehicule;
-  List<String> _vehicules = [];
+  dynamic _selectedVehicule;
+  List<Map<String, dynamic>> _vehicules = [];
 
   @override
   void initState() {
@@ -63,11 +63,21 @@ class _EntretienListState extends State<EntretienList> {
     ).then((value) {
       dynamic responseMap = value;
 
-      var optionsData = responseMap["vehiculesCarteGrise"];
+      var vehiculesData = responseMap["vehicules"];
 
-      for (var optionJson in optionsData) {
-        _vehicules.add(optionJson.toString());
+      for (var vehiculeJson in vehiculesData) {
+        // Extract the required data
+        var vehiculeIdCard = {
+          "id": vehiculeJson["id"],
+          "carte": vehiculeJson["carte_grise"].toString()
+        };
+
+        _vehicules.add(vehiculeIdCard);
+        // Now, you can use 'carteGrise' in your application instead of 'vehiculeId'.
+        // For example, you can print it:
       }
+
+      _selectedVehicule = _vehicules.first;
     });
   }
 
@@ -100,15 +110,15 @@ class _EntretienListState extends State<EntretienList> {
               key: _formKey,
               child: Column(
                 children: <Widget>[
-                  DropdownButtonFormField<String>(
+                  DropdownButtonFormField<Map<String, dynamic>>(
                     value: _selectedVehicule,
-                    items: _vehicules.map((String vehicule) {
-                      return DropdownMenuItem<String>(
+                    items: _vehicules.map((vehicule) {
+                      return DropdownMenuItem<Map<String, dynamic>>(
                         value: vehicule,
-                        child: Text(vehicule),
+                        child: Text(vehicule["carte"]),
                       );
                     }).toList(),
-                    onChanged: (String? newValue) {
+                    onChanged: (newValue) {
                       setState(() {
                         _selectedVehicule = newValue;
                       });
@@ -241,10 +251,10 @@ class _EntretienListState extends State<EntretienList> {
 
                   Entretien entretien = Entretien(
                     id: id,
-                    vehiculeId: int.parse(vehiculeIdController.text),
+                    vehiculeId: _selectedVehicule["id"],
                     operation: operation,
-                    frais: frais,
-                    date: DateTime.parse(date),
+                    frais: double.parse(frais.toString()),
+                    date: date,
                     kmM: int.parse(kmM),
                     kmP: int.parse(kmP),
                     montants: double.parse(montants.toString()),
@@ -257,6 +267,9 @@ class _EntretienListState extends State<EntretienList> {
                     'PUT',
                     entretien.toJson(),
                   ).then((response) {
+                    print(displayedEntretiens);
+                    print(entretien.toJson());
+
                     setState(() {
                       displayedEntretiens[index] = entretien.toJson();
                     });
@@ -343,15 +356,15 @@ class _EntretienListState extends State<EntretienList> {
               key: _formKey,
               child: Column(
                 children: <Widget>[
-                  DropdownButtonFormField<String>(
+                  DropdownButtonFormField<Map<String, dynamic>>(
                     value: _selectedVehicule,
-                    items: _vehicules.map((String vehicule) {
-                      return DropdownMenuItem<String>(
+                    items: _vehicules.map((vehicule) {
+                      return DropdownMenuItem<Map<String, dynamic>>(
                         value: vehicule,
-                        child: Text(vehicule),
+                        child: Text(vehicule["carte"]),
                       );
                     }).toList(),
-                    onChanged: (String? newValue) {
+                    onChanged: (newValue) {
                       setState(() {
                         _selectedVehicule = newValue;
                       });
@@ -473,10 +486,10 @@ class _EntretienListState extends State<EntretienList> {
                 if (_formKey.currentState?.validate() ?? false) {
                   Entretien entretien = Entretien(
                     id: entretienList.length + 1, // Generate a unique ID
-                    vehiculeId: int.parse(vehiculeIdController.text),
+                    vehiculeId: _selectedVehicule["id"],
                     operation: operationController.text,
-                    frais: fraisController.text,
-                    date: DateTime.parse(dateController.text),
+                    frais: double.parse(fraisController.text),
+                    date: dateController.text,
                     kmM: int.parse(kmMController.text),
                     kmP: int.parse(kmPController.text),
                     montants: double.parse(montantsController.text),
@@ -493,6 +506,7 @@ class _EntretienListState extends State<EntretienList> {
                       displayedEntretiens.add(entretien.toJson());
                     });
 
+                    print(displayedEntretiens);
                     print('entretien details added');
 
                     Navigator.of(context).pop();
@@ -589,8 +603,8 @@ class _EntretienListState extends State<EntretienList> {
             editEntretien: _editEntretien,
             deleteEntretien: _deleteEntretien,
             getIndex: _getIndex,
-            vehicules: _vehicules,
-            selectedIndex: selectedIndex),
+            selectedIndex: selectedIndex,
+            vehicules: []),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addNewEntretien,
@@ -632,9 +646,10 @@ class MyDataTableSource extends DataTableSource {
       selected: selectedIndex == index ? true : false,
       cells: [
         DataCell(Text(entretien['id'].toString())),
-        DataCell(Text(vehiculeCarteGrise)), // Use the vehicle carte_grise here
+        DataCell(Text(entretien['vehicule_id']
+            .toString())), // Use the vehicle carte_grise here
         DataCell(Text(entretien['operation'])),
-        DataCell(Text(entretien['frais'])),
+        DataCell(Text(entretien['frais'].toString())),
         DataCell(Text(entretien['date'])),
         DataCell(Text(entretien['km_m'].toString())),
         DataCell(Text(entretien['km_p'].toString())),

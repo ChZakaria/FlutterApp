@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../api/apiService.dart' as client;
 import 'models/contrat.dart';
+
 import 'package:http/http.dart' as http;
 
 class ContratList extends StatefulWidget {
@@ -473,21 +474,6 @@ class _ContratListState extends State<ContratList> {
   }
 
   void _addNewContrat() {
-    locataireIdController.text = "";
-    vehiculeIdController.text = "";
-    dateLocationController.text = "";
-    dateRetourController.text = "";
-    prixUController.text = "";
-    montantRestController.text = "";
-    montantAvanceController.text = "";
-    montantTotalController.text = "";
-    statutController.text = "";
-    intermediaireController.text = "";
-    lieuDepartController.text = "";
-    lieuRetourController.text = "";
-    kmDepartController.text = "";
-    kmRetourController.text = "";
-    observationController.text = "";
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -620,17 +606,22 @@ class _ContratListState extends State<ContratList> {
                       return null;
                     },
                   ),
-                  TextFormField(
-                    controller: intermediaireController,
-                    decoration: InputDecoration(
-                      labelText: 'Intermediaire',
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter an intermediaire';
-                      }
-                      return null;
+                  DropdownButtonFormField<String>(
+                    value: _selectedIntermediaire,
+                    items: _intermediaire.map((String intermediaire) {
+                      return DropdownMenuItem<String>(
+                        value: intermediaire,
+                        child: Text(intermediaire),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedIntermediaire = newValue;
+                      });
                     },
+                    decoration: InputDecoration(
+                      labelText: 'Select an intermediaire',
+                    ),
                   ),
                   TextFormField(
                     controller: lieuDepartController,
@@ -819,6 +810,7 @@ class _ContratListState extends State<ContratList> {
           DataColumn(label: Text('Date Location')),
           DataColumn(label: Text('Date Retour')),
           DataColumn(label: Text('Statut')),
+          DataColumn(label: Text('Intermediare')),
           DataColumn(label: Text('Actions')),
         ],
         source: MyDataTableSource(
@@ -867,6 +859,7 @@ class MyDataTableSource extends DataTableSource {
         DataCell(Text(contrat['date_location'])),
         DataCell(Text(contrat['date_retour'])),
         DataCell(Text(contrat['statut'])),
+        DataCell(Text(contrat['intermediaire'])),
         DataCell(
           Row(
             children: [

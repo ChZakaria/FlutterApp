@@ -1,9 +1,16 @@
+import 'package:meta/meta.dart';
+import 'dart:convert';
+
+Entretien entretienFromJson(String str) => Entretien.fromJson(json.decode(str));
+
+String entretienToJson(Entretien data) => json.encode(data.toJson());
+
 class Entretien {
   int id;
   int vehiculeId;
-  String? operation;
-  String? frais;
-  DateTime date;
+  String operation;
+  double frais;
+  String date;
   int kmM;
   int kmP;
   double montants;
@@ -23,33 +30,29 @@ class Entretien {
     required this.observation,
   });
 
-  factory Entretien.fromJson(Map<String, dynamic> json) {
-    return Entretien(
-      id: json['id'],
-      vehiculeId: json['vehicule_id'],
-      operation: json['operation'],
-      frais: json['frais'],
-      date: DateTime.parse(json['date']),
-      kmM: json['km_m'],
-      kmP: json['km_p'],
-      montants: double.parse(json['montants']),
-      mavertirAvant: json['mavertir_avant'],
-      observation: json['observation'],
-    );
-  }
+  factory Entretien.fromJson(Map<String, dynamic> json) => Entretien(
+        id: json["id"],
+        vehiculeId: json["vehicule_id"],
+        operation: json["operation"],
+        frais: double.parse(json["frais"].toString()),
+        date: json["date"],
+        kmM: json["km_m"],
+        kmP: json["km_p"],
+        montants: double.parse(json["montants"].toString()),
+        mavertirAvant: json["mavertir_avant"],
+        observation: json["observation"],
+      );
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'vehicule_id': vehiculeId,
-      'operation': operation,
-      'frais': frais,
-      'date': date.toIso8601String(),
-      'km_m': kmM,
-      'km_p': kmP,
-      'montants': montants,
-      'mavertir_avant': mavertirAvant,
-      'observation': observation,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "vehicule_id": vehiculeId,
+        "operation": operation,
+        "frais": frais,
+        "date": date,
+        "km_m": kmM,
+        "km_p": kmP,
+        "montants": montants,
+        "mavertir_avant": mavertirAvant,
+        "observation": observation,
+      };
 }
