@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import '../../api/apiService.dart' as client;
-import 'models/intermediaire.dart';
+import '../models/intermediaire.dart';
 
 class IntermediairesList extends StatefulWidget {
   @override

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_web_project/dashboard.dart';
-import 'package:my_web_project/login_page.dart';
+import 'package:my_web_project/pages/dashboard.dart';
+import 'package:my_web_project/pages/login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyHomePage extends StatefulWidget {

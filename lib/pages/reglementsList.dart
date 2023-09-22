@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../api/apiService.dart' as client;
-import 'models/reglements.dart';
+import '../models/reglements.dart';
 
 class ReglementsList extends StatefulWidget {
   @override

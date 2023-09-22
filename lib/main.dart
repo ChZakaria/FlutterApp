@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:my_web_project/dashboard.dart';
-import 'package:my_web_project/home.dart';
-import 'package:my_web_project/login_page.dart';
-import 'package:my_web_project/vehiculeList.dart';
+import 'package:my_web_project/pages/dashboard.dart';
+import 'package:my_web_project/pages/home.dart';
+import 'package:my_web_project/pages/login_page.dart';
+import 'package:my_web_project/pages/vehiculeList.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'routes/route.dart' as route;
 
 void main() {
   SharedPreferences.setMockInitialValues({});
@@ -22,7 +23,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: LoginPage(),
+     
+      onGenerateRoute: route.controller,
+      initialRoute: route.loginPage,
+      debugShowCheckedModeBanner: false,
     );
   }
 }

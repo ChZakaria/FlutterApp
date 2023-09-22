@@ -1,18 +1,11 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:my_web_project/dashboard.dart';
-import 'package:my_web_project/fournisseursList.dart';
-import 'package:my_web_project/intermediairesList.dart';
-import 'package:my_web_project/locatairesList.dart';
-import 'package:my_web_project/models/intermediaire.dart';
+
 import 'package:my_web_project/models/user.dart';
-import 'package:my_web_project/supplementsList.dart';
-import 'package:my_web_project/vehiculeList.dart';
-import 'package:my_web_project/entretienList.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'api/apiLogin.dart' as login;
+
+import '../api/apiLogin.dart' as login;
+
+import 'package:my_web_project/routes/route.dart' as route;
 
 class LoginPage extends StatefulWidget {
   @override
@@ -125,10 +118,9 @@ class _LoginPageState extends State<LoginPage> {
 
                       login.ApiLogin.makeLoginRequest(myUser).then((value) {
                         if (value) {
-                          Navigator.push(
+                          Navigator.pushNamed(
                             context,
-                            MaterialPageRoute(
-                                builder: (context) => Dashboard()),
+                           route.dashboard
                           );
                         } else {
                           showLoginErrorDialog(context);
