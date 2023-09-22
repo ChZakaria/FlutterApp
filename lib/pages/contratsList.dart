@@ -1,14 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-<<<<<<< HEAD:lib/contratsList.dart
 import '../../api/apiService.dart' as client;
-import 'models/contrat.dart';
-
-=======
-import '../../../api/apiService.dart' as client;
 import '../models/contrat.dart';
->>>>>>> 8af81f4654b6bc1f425ab4cb81fab454d1b4be79:lib/pages/contratsList.dart
 import 'package:http/http.dart' as http;
 
 class ContratList extends StatefulWidget {

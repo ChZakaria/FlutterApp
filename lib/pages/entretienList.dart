@@ -24,6 +24,10 @@ class _EntretienListState extends State<EntretienList> {
   TextEditingController observationController = TextEditingController();
   TextEditingController searchController = TextEditingController();
 
+  bool fHuileChecked = false;
+  bool fAirChecked = false;
+  bool fCarburantChecked = false;
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   int? selectedIndex = -1;
   String? bearerToken;
@@ -90,6 +94,7 @@ class _EntretienListState extends State<EntretienList> {
   void _editEntretien(int index) {
     Entretien entretien = Entretien.fromJson(displayedEntretiens[index]);
 
+    print(entretien);
     vehiculeIdController.text = entretien.vehiculeId.toString();
     operationController.text = entretien.operation.toString();
     fraisController.text = entretien.frais.toString();
@@ -100,201 +105,241 @@ class _EntretienListState extends State<EntretienList> {
     mavertirAvantController.text = entretien.mavertirAvant.toString();
     observationController.text = entretien.observation.toString();
 
+    fHuileChecked = entretien.fhuile == 0 ? false : true;
+    fAirChecked = entretien.fair == 0 ? false : true;
+    fCarburantChecked = entretien.fcarburant == 0 ? false : true;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Edit Entretien Details'),
-          content: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: <Widget>[
-                  DropdownButtonFormField<Map<String, dynamic>>(
-                    value: _selectedVehicule,
-                    items: _vehicules.map((vehicule) {
-                      return DropdownMenuItem<Map<String, dynamic>>(
-                        value: vehicule,
-                        child: Text(vehicule["carte"]),
-                      );
-                    }).toList(),
-                    onChanged: (newValue) {
-                      setState(() {
-                        _selectedVehicule = newValue;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Select a vehicule',
-                    ),
-                  ),
-                  TextFormField(
-                    controller: operationController,
-                    decoration: InputDecoration(
-                      labelText: 'Operation',
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter an operation';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: fraisController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Frais',
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the frais';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: dateController,
-                    keyboardType: TextInputType.datetime,
-                    decoration: InputDecoration(
-                      labelText: 'Date',
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the date';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: kmMController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Km_m',
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the Km_m';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: kmPController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Km_p',
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the Km_p';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: montantsController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Montants',
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the montants';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: mavertirAvantController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Mavertir_avant',
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the Mavertir_avant';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: observationController,
-                    decoration: InputDecoration(
-                      labelText: 'Observation',
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the observation';
-                      }
-                      return null;
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-          actions: <Widget>[
-            ElevatedButton(
-              child: Text('Save'),
-              onPressed: () {
-                if (_formKey.currentState?.validate() ?? false) {
-                  int id = displayedEntretiens[index]['id'];
-                  String operation = operationController.text.toString();
-                  String? frais = fraisController.text.toString();
-                  String date = dateController.text.toString();
-                  String kmM = kmMController.text.toString();
-                  String kmP = kmPController.text.toString();
-                  double montants = double.parse(montantsController.text);
-                  String mavertirAvant =
-                      mavertirAvantController.text.toString();
-                  String observation = observationController.text.toString();
-
-                  Entretien entretien = Entretien(
-                    id: id,
-                    vehiculeId: _selectedVehicule["id"],
-                    operation: operation,
-                    frais: double.parse(frais.toString()),
-                    date: date,
-                    kmM: int.parse(kmM),
-                    kmP: int.parse(kmP),
-                    montants: double.parse(montants.toString()),
-                    mavertirAvant: int.parse(mavertirAvant),
-                    observation: observation,
-                  );
-
-                  client.ApiService.makeApiRequest(
-                    'entretiens/$id',
-                    'PUT',
-                    entretien.toJson(),
-                  ).then((response) {
-                    print(displayedEntretiens);
-                    print(entretien.toJson());
-
-                    setState(() {
-                      displayedEntretiens[index] = entretien.toJson();
-                    });
-
-                    print('entretien details updated');
-
-                    Navigator.of(context).pop();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Details updated'),
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text('Edit Entretien Details'),
+              content: SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: <Widget>[
+                      DropdownButtonFormField<Map<String, dynamic>>(
+                        value: _selectedVehicule,
+                        items: _vehicules.map((vehicule) {
+                          return DropdownMenuItem<Map<String, dynamic>>(
+                            value: vehicule,
+                            child: Text(vehicule["carte"]),
+                          );
+                        }).toList(),
+                        onChanged: (newValue) {
+                          setState(() {
+                            _selectedVehicule = newValue;
+                          });
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Select a vehicule',
+                        ),
                       ),
-                    );
-                  }).catchError((error) {
-                    print('Error updating entretien details: $error');
-                  });
-                }
-              },
-            ),
-            TextButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+                      TextFormField(
+                        controller: operationController,
+                        decoration: InputDecoration(
+                          labelText: 'Operation',
+                        ),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter an operation';
+                          }
+                          return null;
+                        },
+                      ),
+                      CheckboxListTile(
+                        title: Text('F. huile'),
+                        value: fHuileChecked,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            fHuileChecked = value!;
+                          });
+                        },
+                      ),
+                      CheckboxListTile(
+                        title: Text('F. à air'),
+                        value: fAirChecked,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            fAirChecked = value!;
+                          });
+                        },
+                      ),
+                      CheckboxListTile(
+                        title: Text('F. de carburant'),
+                        value: fCarburantChecked,
+                        onChanged: (bool? value) {
+                          print(value);
+                          setState(() {
+                            fCarburantChecked = value!;
+                          });
+                        },
+                      ),
+                      TextFormField(
+                        controller: fraisController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: 'Frais',
+                        ),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter the frais';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: dateController,
+                        keyboardType: TextInputType.datetime,
+                        decoration: InputDecoration(
+                          labelText: 'Date',
+                        ),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter the date';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: kmMController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: 'Km_m',
+                        ),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter the Km_m';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: kmPController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: 'Km_p',
+                        ),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter the Km_p';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: montantsController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: 'Montants',
+                        ),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter the montants';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: mavertirAvantController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: 'Mavertir_avant',
+                        ),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter the Mavertir_avant';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: observationController,
+                        decoration: InputDecoration(
+                          labelText: 'Observation',
+                        ),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter the observation';
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              actions: <Widget>[
+                ElevatedButton(
+                  child: Text('Save'),
+                  onPressed: () {
+                    if (_formKey.currentState?.validate() ?? false) {
+                      int id = displayedEntretiens[index]['id'];
+                      String operation = operationController.text.toString();
+                      String? frais = fraisController.text.toString();
+                      String date = dateController.text.toString();
+                      String kmM = kmMController.text.toString();
+                      String kmP = kmPController.text.toString();
+                      double montants = double.parse(montantsController.text);
+                      String mavertirAvant =
+                          mavertirAvantController.text.toString();
+                      String observation =
+                          observationController.text.toString();
+
+                      Entretien entretien = Entretien(
+                        id: id,
+                        vehiculeId: _selectedVehicule["id"],
+                        operation: operation,
+                        frais: double.parse(frais.toString()),
+                        date: date,
+                        kmM: int.parse(kmM),
+                        kmP: int.parse(kmP),
+                        montants: double.parse(montants.toString()),
+                        mavertirAvant: int.parse(mavertirAvant),
+                        observation: observation,
+                        fhuile: fHuileChecked ? 1 : 0,
+                        fair: fAirChecked ? 1 : 0,
+                        fcarburant: fCarburantChecked ? 1 : 0,
+                      );
+
+                      client.ApiService.makeApiRequest(
+                        'entretiens/$id',
+                        'PUT',
+                        entretien.toJson(),
+                      ).then((response) {
+                        print(displayedEntretiens);
+                        print(entretien.toJson());
+
+                        setState(() {
+                          displayedEntretiens[index] = entretien.toJson();
+                        });
+
+                        print('entretien details updated');
+
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Details updated'),
+                          ),
+                        );
+                      }).catchError((error) {
+                        print('Error updating entretien details: $error');
+                      });
+                    }
+                  },
+                ),
+                TextButton(
+                  child: Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -349,186 +394,218 @@ class _EntretienListState extends State<EntretienList> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Add New Entretien'),
-          content: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: <Widget>[
-                  DropdownButtonFormField<Map<String, dynamic>>(
-                    value: _selectedVehicule,
-                    items: _vehicules.map((vehicule) {
-                      return DropdownMenuItem<Map<String, dynamic>>(
-                        value: vehicule,
-                        child: Text(vehicule["carte"]),
-                      );
-                    }).toList(),
-                    onChanged: (newValue) {
-                      setState(() {
-                        _selectedVehicule = newValue;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Select a vehicule',
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('Add New Entretien'),
+            content: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: <Widget>[
+                    DropdownButtonFormField<Map<String, dynamic>>(
+                      value: _selectedVehicule,
+                      items: _vehicules.map((vehicule) {
+                        return DropdownMenuItem<Map<String, dynamic>>(
+                          value: vehicule,
+                          child: Text(vehicule["carte"]),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        setState(() {
+                          _selectedVehicule = newValue;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Select a vehicule',
+                      ),
                     ),
-                  ),
-                  TextFormField(
-                    controller: operationController,
-                    decoration: InputDecoration(
-                      labelText: 'Operation',
+                    TextFormField(
+                      controller: operationController,
+                      decoration: InputDecoration(
+                        labelText: 'Operation',
+                      ),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter an operation';
+                        }
+                        return null;
+                      },
                     ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter an operation';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: fraisController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Frais',
+                    CheckboxListTile(
+                      title: Text('F. huile'),
+                      value: fHuileChecked,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          fHuileChecked = value!;
+                        });
+                      },
                     ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the frais';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: dateController,
-                    keyboardType: TextInputType.datetime,
-                    decoration: InputDecoration(
-                      labelText: 'Date',
+                    CheckboxListTile(
+                      title: Text('F. à air'),
+                      value: fAirChecked,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          fAirChecked = value!;
+                        });
+                      },
                     ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the date';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: kmMController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Km_m',
+                    CheckboxListTile(
+                      title: Text('F. de carburant'),
+                      value: fCarburantChecked,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          fCarburantChecked = value!;
+                        });
+                      },
                     ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the Km_m';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: kmPController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Km_p',
+                    TextFormField(
+                      controller: fraisController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: 'Frais',
+                      ),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter the frais';
+                        }
+                        return null;
+                      },
                     ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the Km_p';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: montantsController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Montants',
+                    TextFormField(
+                      controller: dateController,
+                      keyboardType: TextInputType.datetime,
+                      decoration: InputDecoration(
+                        labelText: 'Date',
+                      ),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter the date';
+                        }
+                        return null;
+                      },
                     ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the montants';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: mavertirAvantController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Mavertir_avant',
+                    TextFormField(
+                      controller: kmMController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: 'Km_m',
+                      ),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter the Km_m';
+                        }
+                        return null;
+                      },
                     ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the Mavertir_avant';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: observationController,
-                    decoration: InputDecoration(
-                      labelText: 'Observation',
+                    TextFormField(
+                      controller: kmPController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: 'Km_p',
+                      ),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter the Km_p';
+                        }
+                        return null;
+                      },
                     ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the observation';
-                      }
-                      return null;
-                    },
-                  ),
-                ],
+                    TextFormField(
+                      controller: montantsController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: 'Montants',
+                      ),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter the montants';
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      controller: mavertirAvantController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: 'Mavertir_avant',
+                      ),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter the Mavertir_avant';
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      controller: observationController,
+                      decoration: InputDecoration(
+                        labelText: 'Observation',
+                      ),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter the observation';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          actions: <Widget>[
-            ElevatedButton(
-              child: Text('Save'),
-              onPressed: () {
-                if (_formKey.currentState?.validate() ?? false) {
-                  Entretien entretien = Entretien(
-                    id: entretienList.length + 1, // Generate a unique ID
-                    vehiculeId: _selectedVehicule["id"],
-                    operation: operationController.text,
-                    frais: double.parse(fraisController.text),
-                    date: dateController.text,
-                    kmM: int.parse(kmMController.text),
-                    kmP: int.parse(kmPController.text),
-                    montants: double.parse(montantsController.text),
-                    mavertirAvant: int.parse(mavertirAvantController.text),
-                    observation: observationController.text,
-                  );
-
-                  client.ApiService.makeApiRequest(
-                    'entretiens',
-                    'POST',
-                    entretien.toJson(),
-                  ).then((response) {
-                    setState(() {
-                      displayedEntretiens.add(entretien.toJson());
-                    });
-
-                    print(displayedEntretiens);
-                    print('entretien details added');
-
-                    Navigator.of(context).pop();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Entretien added'),
-                      ),
+            actions: <Widget>[
+              ElevatedButton(
+                child: Text('Save'),
+                onPressed: () {
+                  if (_formKey.currentState?.validate() ?? false) {
+                    Entretien entretien = Entretien(
+                      id: entretienList.length + 1, // Generate a unique ID
+                      vehiculeId: _selectedVehicule["id"],
+                      operation: operationController.text,
+                      frais: double.parse(fraisController.text),
+                      date: dateController.text,
+                      kmM: int.parse(kmMController.text),
+                      kmP: int.parse(kmPController.text),
+                      montants: double.parse(montantsController.text),
+                      mavertirAvant: int.parse(mavertirAvantController.text),
+                      observation: observationController.text,
+                      fhuile: fHuileChecked ? 1 : 0,
+                      fair: fAirChecked ? 1 : 0,
+                      fcarburant: fCarburantChecked ? 1 : 0,
                     );
-                  }).catchError((error) {
-                    print('Error adding entretien details: $error');
-                  });
-                }
-              },
-            ),
-            TextButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
+
+                    client.ApiService.makeApiRequest(
+                      'entretiens',
+                      'POST',
+                      entretien.toJson(),
+                    ).then((response) {
+                      setState(() {
+                        displayedEntretiens.add(entretien.toJson());
+                      });
+
+                      print(displayedEntretiens);
+                      print('entretien details added');
+
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Entretien added'),
+                        ),
+                      );
+                    }).catchError((error) {
+                      print('Error adding entretien details: $error');
+                    });
+                  }
+                },
+              ),
+              TextButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
       },
     );
   }
