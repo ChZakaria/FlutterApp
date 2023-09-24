@@ -2,6 +2,7 @@ class Contrat {
   int id;
   int locataireId;
   int vehiculeId;
+  int intermediaireId;
   DateTime dateLocation;
   DateTime dateRetour;
   double prixU;
@@ -11,7 +12,6 @@ class Contrat {
   String statut;
   DateTime creeLe;
   DateTime misAJourLe;
-  String intermediaire;
   String lieuDepart;
   String lieuRetour;
   int kmDepart;
@@ -22,6 +22,7 @@ class Contrat {
     required this.id,
     required this.locataireId,
     required this.vehiculeId,
+    required this.intermediaireId,
     required this.dateLocation,
     required this.dateRetour,
     required this.prixU,
@@ -31,7 +32,6 @@ class Contrat {
     required this.statut,
     required this.creeLe,
     required this.misAJourLe,
-    required this.intermediaire,
     required this.lieuDepart,
     required this.lieuRetour,
     required this.kmDepart,
@@ -44,16 +44,16 @@ class Contrat {
       id: json["id"],
       locataireId: json["locataire_id"],
       vehiculeId: json["vehicule_id"],
+      intermediaireId: json["intermediaire_id"],
       dateLocation: DateTime.parse(json["date_location"]),
       dateRetour: DateTime.parse(json["date_retour"]),
-      prixU: double.parse(json["prix_u"]),
-      montantRest: double.parse(json["montant_rest"]),
-      montantAvance: double.parse(json["montant_avance"]),
-      montantTotal: double.parse(json["montant_total"]),
+      prixU: double.parse(json["prix_u"].toString()),
+      montantRest: double.parse(json["montant_rest"].toString()),
+      montantAvance: double.parse(json["montant_avance"].toString()),
+      montantTotal: double.parse(json["montant_total"].toString()),
       statut: json["statut"],
       creeLe: DateTime.parse(json["cree_le"]),
       misAJourLe: DateTime.parse(json["mis_a_jour_le"]),
-      intermediaire: json["intermediaire"],
       lieuDepart: json["lieu_depart"],
       lieuRetour: json["lieu_retour"],
       kmDepart: json["km_depart"],
@@ -67,6 +67,7 @@ class Contrat {
       "id": id,
       "locataire_id": locataireId,
       "vehicule_id": vehiculeId,
+      "intermediaire_id": intermediaireId,
       "date_location": dateLocation.toIso8601String(),
       "date_retour": dateRetour.toIso8601String(),
       "prix_u": prixU,
@@ -76,7 +77,6 @@ class Contrat {
       "statut": statut,
       "cree_le": creeLe.toIso8601String(),
       "mis_a_jour_le": misAJourLe.toIso8601String(),
-      "intermediaire": intermediaire,
       "lieu_depart": lieuDepart,
       "lieu_retour": lieuRetour,
       "km_depart": kmDepart,
