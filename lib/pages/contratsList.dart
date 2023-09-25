@@ -61,6 +61,7 @@ class _ContratListState extends State<ContratList> {
       List<Contrat> contrats = [];
 
       for (var contratJson in contratsData) {
+        print(contratJson);
         Contrat contrat = Contrat.fromJson(contratJson);
         contrats.add(contrat);
         contratList.add(contratJson);
@@ -147,8 +148,8 @@ class _ContratListState extends State<ContratList> {
     Contrat contrat = Contrat.fromJson(displayedContrats[index]);
 
     locataireIdController.text = contrat.locataireId.toString();
-    vehiculeIdController.text = contrat.vehiculeId.toString();
-    intermediaireController.text = contrat.intermediaireId.toString();
+    vehiculeIdController.text = contrat.vhiculeId.toString();
+    intermediaireController.text = contrat.intermdiaire.toString();
     dateLocationController.text = contrat.dateLocation.toString();
     dateRetourController.text = contrat.dateRetour.toString();
     prixUController.text = contrat.prixU.toString();
@@ -403,22 +404,22 @@ class _ContratListState extends State<ContratList> {
                     Contrat contrat = Contrat(
                         id: id,
                         locataireId: _selectedLocataire["id"],
-                        vehiculeId: _selectedVehicule["id"],
-                        intermediaireId: _selectedIntermediaire["id"],
+                        vhiculeId: _selectedVehicule["id"],
+                        intermdiaire: _selectedIntermediaire["id"],
                         dateLocation: DateTime.parse(dateLocation),
                         dateRetour: DateTime.parse(dateRetour),
-                        prixU: prixU,
-                        montantRest: montantRest,
-                        montantAvance: montantAvance,
-                        montantTotal: montantTotal,
+                        prixU: double.parse(prixU.toString()),
+                        montantRest: double.parse(montantRest.toString()),
+                        montantAvance: double.parse(montantAvance.toString()),
+                        montantTotal: double.parse(montantTotal.toString()),
                         statut: statut,
                         lieuDepart: lieuDepart,
                         lieuRetour: lieuRetour,
                         kmDepart: kmDepart,
                         kmRetour: kmRetour,
                         observation: observation,
-                        creeLe: DateTime.now(),
-                        misAJourLe: DateTime.now());
+                        crLe: DateTime.now().toString(),
+                        misJourLe: DateTime.now().toString());
 
                     client.ApiService.makeApiRequest(
                       'contrats/$id',
@@ -726,8 +727,8 @@ class _ContratListState extends State<ContratList> {
                     Contrat contrat = Contrat(
                         id: contratList.last["id"] + 1, // Generate a unique ID
                         locataireId: _selectedLocataire["id"],
-                        vehiculeId: _selectedVehicule["id"],
-                        intermediaireId: _selectedIntermediaire["id"],
+                        vhiculeId: _selectedVehicule["id"],
+                        intermdiaire: _selectedIntermediaire["id"],
                         dateLocation:
                             DateTime.parse(dateLocationController.text),
                         dateRetour: DateTime.parse(dateRetourController.text),
@@ -742,8 +743,8 @@ class _ContratListState extends State<ContratList> {
                         kmDepart: int.parse(kmDepartController.text),
                         kmRetour: int.parse(kmRetourController.text),
                         observation: observationController.text,
-                        creeLe: DateTime.now(),
-                        misAJourLe: DateTime.now());
+                        crLe: DateTime.now().toString(),
+                        misJourLe: DateTime.now().toString());
 
                     client.ApiService.makeApiRequest(
                       'contrats',
@@ -794,7 +795,7 @@ class _ContratListState extends State<ContratList> {
                   .toLowerCase()
                   .contains(query.toLowerCase()) ||
               contrat["statut"].toLowerCase().contains(query.toLowerCase()) ||
-              contrat["intermediaire"]
+              contrat["intermdiaire"]
                   .toLowerCase()
                   .contains(query.toLowerCase()) ||
               contrat["lieu_depart"]
@@ -887,8 +888,8 @@ class MyDataTableSource extends DataTableSource {
       cells: [
         DataCell(Text(contrat['id'].toString())),
         DataCell(Text(contrat['locataire_id'].toString())),
-        DataCell(Text(contrat['vehicule_id'].toString())),
-        DataCell(Text(contrat['intermediaire_id'].toString())),
+        DataCell(Text(contrat['véhicule_id'].toString())),
+        DataCell(Text(contrat['intermédiaire'].toString())),
         DataCell(Text(contrat['date_location'])),
         DataCell(Text(contrat['date_retour'])),
         DataCell(Text(contrat['statut'])),
