@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
       ),
      
       onGenerateRoute: route.controller,
-      initialRoute: route.homePage,
+      initialRoute: route.loginPage,
       debugShowCheckedModeBanner: false,
     );
   }
