@@ -145,11 +145,13 @@ class _ContratListState extends State<ContratList> {
   }
 
   void _editContrat(int index) {
+
+
     Contrat contrat = Contrat.fromJson(displayedContrats[index]);
 
     locataireIdController.text = contrat.locataireId.toString();
     vehiculeIdController.text = contrat.vhiculeId.toString();
-    intermediaireController.text = contrat.intermdiaire.toString();
+    intermediaireController.text = contrat.intermdiaireId.toString();
     dateLocationController.text = contrat.dateLocation.toString();
     dateRetourController.text = contrat.dateRetour.toString();
     prixUController.text = contrat.prixU.toString();
@@ -405,7 +407,7 @@ class _ContratListState extends State<ContratList> {
                         id: id,
                         locataireId: _selectedLocataire["id"],
                         vhiculeId: _selectedVehicule["id"],
-                        intermdiaire: _selectedIntermediaire["id"],
+                        intermdiaireId: _selectedIntermediaire["id"],
                         dateLocation: DateTime.parse(dateLocation),
                         dateRetour: DateTime.parse(dateRetour),
                         prixU: double.parse(prixU.toString()),
@@ -421,11 +423,14 @@ class _ContratListState extends State<ContratList> {
                         crLe: DateTime.now().toString(),
                         misJourLe: DateTime.now().toString());
 
+                        print(contrat.toJson());
+
                     client.ApiService.makeApiRequest(
                       'contrats/$id',
                       'PUT',
                       contrat.toJson(),
                     ).then((response) {
+                      print(response);
                       setState(() {
                         displayedContrats[index] = contrat.toJson();
                       });
@@ -728,7 +733,7 @@ class _ContratListState extends State<ContratList> {
                         id: contratList.last["id"] + 1, // Generate a unique ID
                         locataireId: _selectedLocataire["id"],
                         vhiculeId: _selectedVehicule["id"],
-                        intermdiaire: _selectedIntermediaire["id"],
+                        intermdiaireId: _selectedIntermediaire["id"],
                         dateLocation:
                             DateTime.parse(dateLocationController.text),
                         dateRetour: DateTime.parse(dateRetourController.text),

@@ -22,7 +22,7 @@ class Contrat {
     String statut;
     String crLe;
     String misJourLe;
-    String intermdiaire;
+    int intermdiaireId;
     String lieuDepart;
     String lieuRetour;
     int kmDepart;
@@ -42,7 +42,7 @@ class Contrat {
         required this.statut,
         required this.crLe,
         required this.misJourLe,
-        required this.intermdiaire,
+        required this.intermdiaireId,
         required this.lieuDepart,
         required this.lieuRetour,
         required this.kmDepart,
@@ -83,7 +83,7 @@ class Contrat {
             statut: statut ?? this.statut,
             crLe: crLe ?? this.crLe,
             misJourLe: misJourLe ?? this.misJourLe,
-            intermdiaire: intermdiaire ?? this.intermdiaire,
+            intermdiaireId: intermdiaireId ?? this.intermdiaireId,
             lieuDepart: lieuDepart ?? this.lieuDepart,
             lieuRetour: lieuRetour ?? this.lieuRetour,
             kmDepart: kmDepart ?? this.kmDepart,
@@ -98,13 +98,13 @@ class Contrat {
         dateLocation: DateTime.parse(json["date_location"]),
         dateRetour: DateTime.parse(json["date_retour"]),
         prixU: double.parse(json["prix_u"].toString()),
-        montantRest: double.parse(json["montant_rest"]),
-        montantAvance: double.parse(json["montant_avance"]),
-        montantTotal: double.parse(json["montant_total"]),
+        montantRest: double.parse(json["montant_rest"].toString()),
+        montantAvance: double.parse(json["montant_avance"].toString()),
+        montantTotal: double.parse(json["montant_total"].toString()),
         statut: json["statut"],
         crLe: json["créé_le"],
         misJourLe: json["mis_à_jour_le"],
-        intermdiaire: json["intermédiaire"],
+        intermdiaireId: json["intermédiaire"],
         lieuDepart: json["lieu_depart"],
         lieuRetour: json["lieu_retour"],
         kmDepart: json["km_depart"],
@@ -125,7 +125,7 @@ class Contrat {
         "statut": statut,
         "créé_le": crLe,
         "mis_à_jour_le": misJourLe,
-        "intermédiaire": intermdiaire,
+        "intermédiaire": intermdiaireId,
         "lieu_depart": lieuDepart,
         "lieu_retour": lieuRetour,
         "km_depart": kmDepart,
