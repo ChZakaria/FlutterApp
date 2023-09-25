@@ -5,10 +5,6 @@ import 'package:my_web_project/routes/route.dart' as route;
 class Dashboard extends StatelessWidget {
   //
   //
-  //
-  //
-  //
-  //
 
   // use this to push to name route defined in route file
   pushToRoute(BuildContext context, routeName) {

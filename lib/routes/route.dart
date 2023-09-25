@@ -5,17 +5,18 @@ import 'package:flutter/material.dart';
 import '../pages/pages.dart';
 
 // Route Names
-const String loginPage = 'login';
-const String vehiculeListPage = 'vehiculeList';
-const String contratsListPage = "contratsList";
-const String chargeFixesListPage = "chargeFixesList";
-const String fournisseursListPage = "fournisseursList";
-const String intermidiairesListPage = "intermidiairesList";
-const String regelementsListPage = "regelementsList";
-const String supplementsListPage = "supplementsList";
-const String entretiensListPage = "entretiensList";
-const String locatairesListPage = "locatairesList";
-const String dashboard = "dashboard";
+const String loginPage = '/login';
+const String vehiculeListPage = '/vehiculeList';
+const String contratsListPage = "/contratsList";
+const String chargeFixesListPage = "/chargeFixesList";
+const String fournisseursListPage = "/fournisseursList";
+const String intermidiairesListPage = "/intermidiairesList";
+const String regelementsListPage = "/regelementsList";
+const String supplementsListPage = "/supplementsList";
+const String entretiensListPage = "/entretiensList";
+const String locatairesListPage = "/locatairesList";
+const String dashboard = "/dashboard";
+const String homePage = "/homepage";
 //const String settingsPage = 'settings';
 
 // Control our page route flow
@@ -27,22 +28,28 @@ Route<dynamic> controller(RouteSettings settings) {
       return MaterialPageRoute(builder: (context) => VehiculeList());
     case contratsListPage:
       return MaterialPageRoute(builder: (context) => ContratList());
-      case chargeFixesListPage:
+    case chargeFixesListPage:
       return MaterialPageRoute(builder: (context) => ChargesFixesList());
-      case fournisseursListPage:
+    case fournisseursListPage:
       return MaterialPageRoute(builder: (context) => FournisseurList());
-      case intermidiairesListPage:
+    case intermidiairesListPage:
       return MaterialPageRoute(builder: (context) => IntermediairesList());
-      case regelementsListPage:
+    case regelementsListPage:
       return MaterialPageRoute(builder: (context) => ReglementsList());
-      case supplementsListPage:
+    case supplementsListPage:
       return MaterialPageRoute(builder: (context) => SupplementList());
-      case entretiensListPage:
+    case entretiensListPage:
       return MaterialPageRoute(builder: (context) => EntretienList());
-      case locatairesListPage:
+    case locatairesListPage:
       return MaterialPageRoute(builder: (context) => LocatairesList());
-       case dashboard:
+    case dashboard:
       return MaterialPageRoute(builder: (context) => Dashboard());
+    case homePage:
+      return MaterialPageRoute(builder: (context) => MyHomePage());
+    case '/':
+      // don't generate route on start-up
+      return MaterialPageRoute(builder: (context) => LoginPage());
+      ;
 
     //   return MaterialPageRoute(builder: (context) => SettingsPage());
     default:
