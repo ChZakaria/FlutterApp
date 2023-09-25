@@ -76,6 +76,12 @@ class Dashboard extends StatelessWidget {
       "name": "Vehicules",
       "route": route.vehiculeListPage
     },
+    {
+      "icon": Icons.receipt_outlined,
+      "color": Colors.purple,
+      "name": "Charges Fixes",
+      "route": route.chargeFixesListPage
+    },
   ];
 
   // method returns Elevated button to avoid repetitive code
