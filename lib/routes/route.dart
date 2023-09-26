@@ -15,6 +15,7 @@ const String regelementsListPage = "/regelementsList";
 const String supplementsListPage = "/supplementsList";
 const String entretiensListPage = "/entretiensList";
 const String locatairesListPage = "/locatairesList";
+const String  reservationsListPage = "/reservationsList";
 const String dashboard = "/dashboard";
 const String homePage = "/homepage";
 //const String settingsPage = 'settings';
@@ -42,6 +43,8 @@ Route<dynamic> controller(RouteSettings settings) {
       return MaterialPageRoute(builder: (context) => EntretienList());
     case locatairesListPage:
       return MaterialPageRoute(builder: (context) => LocatairesList());
+   case reservationsListPage:
+      return MaterialPageRoute(builder: (context) => ReservationsList());
     case dashboard:
       return MaterialPageRoute(builder: (context) => Dashboard());
     case homePage:

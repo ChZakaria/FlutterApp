@@ -9,5 +9,6 @@ export 'login_page.dart';
 export 'reglementsList.dart' hide MyDataTableSource;
 export 'supplementsList.dart' hide MyDataTableSource;
 export 'vehiculeList.dart' hide MyDataTableSource;
+export 'reservationsList.dart';
 export 'homePage.dart';
 

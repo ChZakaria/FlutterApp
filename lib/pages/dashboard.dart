@@ -26,7 +26,7 @@ class Dashboard extends StatelessWidget {
       "icon": Icons.calendar_month_outlined,
       "color": Colors.purpleAccent,
       "name": "Reservations",
-      "route": route.chargeFixesListPage
+      "route": route.reservationsListPage
     },
     {
       "icon": Icons.person,
