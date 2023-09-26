@@ -91,7 +91,7 @@ class _EntretienListState extends State<EntretienList> {
     });
   }
 
-  void _editEntretien(int index) {
+  void _editEntretien(int index) async {
     Entretien entretien = Entretien.fromJson(displayedEntretiens[index]);
 
     print(entretien);
@@ -109,7 +109,7 @@ class _EntretienListState extends State<EntretienList> {
     fAirChecked = entretien.fair == 0 ? false : true;
     fCarburantChecked = entretien.fcarburant == 0 ? false : true;
 
-    showDialog(
+    Entretien? _entretien = await showDialog<Entretien>(
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
@@ -313,13 +313,10 @@ class _EntretienListState extends State<EntretienList> {
                         print(displayedEntretiens);
                         print(entretien.toJson());
 
-                        setState(() {
-                          displayedEntretiens[index] = entretien.toJson();
-                        });
-
                         print('entretien details updated');
 
-                        Navigator.of(context).pop();
+                        Navigator.of(context).pop(entretien);
+
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text('Details updated'),
@@ -343,6 +340,11 @@ class _EntretienListState extends State<EntretienList> {
         );
       },
     );
+    if (_entretien != null) {
+      setState(() {
+        displayedEntretiens[index] = _entretien.toJson();
+      });
+    }
   }
 
   void _deleteEntretien(int index) {
@@ -390,8 +392,8 @@ class _EntretienListState extends State<EntretienList> {
     );
   }
 
-  void _addNewEntretien() {
-    showDialog(
+  void _addNewEntretien() async {
+    Entretien? _entretien = await showDialog<Entretien>(
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(builder: (context, setState) {
@@ -578,14 +580,11 @@ class _EntretienListState extends State<EntretienList> {
                       'POST',
                       entretien.toJson(),
                     ).then((response) {
-                      setState(() {
-                        displayedEntretiens.add(entretien.toJson());
-                      });
-
                       print(displayedEntretiens);
+
                       print('entretien details added');
 
-                      Navigator.of(context).pop();
+                      Navigator.of(context).pop(entretien);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('Entretien added'),
@@ -608,6 +607,11 @@ class _EntretienListState extends State<EntretienList> {
         });
       },
     );
+    if (_entretien != null) {
+      setState(() {
+        displayedEntretiens.add(_entretien.toJson());
+      });
+    }
   }
 
   void _searchEntretiens(String query) {

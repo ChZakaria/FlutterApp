@@ -756,6 +756,7 @@ class _ContratListState extends State<ContratList> {
                       'POST',
                       contrat.toJson(),
                     ).then((response) {
+                      print(response);
                       setState(() {
                         displayedContrats.add(contrat.toJson());
                       });
@@ -893,8 +894,8 @@ class MyDataTableSource extends DataTableSource {
       cells: [
         DataCell(Text(contrat['id'].toString())),
         DataCell(Text(contrat['locataire_id'].toString())),
-        DataCell(Text(contrat['véhicule_id'].toString())),
-        DataCell(Text(contrat['intermédiaire'].toString())),
+        DataCell(Text(contrat['vehicule_id'].toString())),
+        DataCell(Text(contrat['intermediaire'].toString())),
         DataCell(Text(contrat['date_location'])),
         DataCell(Text(contrat['date_retour'])),
         DataCell(Text(contrat['statut'])),

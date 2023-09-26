@@ -93,6 +93,7 @@ class Dashboard extends StatelessWidget {
         pushToRoute(context, route);
       },
       style: ElevatedButton.styleFrom(
+        
         backgroundColor: color,
         padding: const EdgeInsets.all(8.0), // Smaller padding
         shape: RoundedRectangleBorder(
@@ -105,14 +106,14 @@ class Dashboard extends StatelessWidget {
         children: [
           Icon(
             icon,
-            size: 32.0,
+            size: 15.0,
             color: Colors.white, // Text and icon color
           ), // Smaller icon
           const SizedBox(height: 4.0), // Smaller gap
           Text(
             name,
             style: TextStyle(
-              fontSize: 14.0,
+              fontSize: 10.0,
               color: Colors.white, // Text color
             ),
           ), // Smaller text
@@ -123,26 +124,21 @@ class Dashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Dashboard'),
-      ),
-      body: Center(
-        child: Container(
-          width: 1200,
+    return Container(
+          width: double.infinity,
           child: GridView.count(
+            shrinkWrap: true,
             crossAxisCount: 5, // Adjust the number of columns as needed
-            padding: EdgeInsets.all(16.0),
-            mainAxisSpacing: 16.0,
-            crossAxisSpacing: 16.0,
-            childAspectRatio: 1.0, // Adjust the aspect ratio as needed
+            padding: EdgeInsets.all(5.0),
+            mainAxisSpacing: 4.0,
+            crossAxisSpacing: 4.0,
+            childAspectRatio: 3, // Adjust the aspect ratio as needed
             children: [
               ...listOfButtons.map((e) => _gridButton(
                   e["icon"], e["color"], e["name"], e["route"], context))
             ],
-          ),
-        ),
-      ),
-    );
+          ),);
+        
+      
   }
 }

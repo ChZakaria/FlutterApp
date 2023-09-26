@@ -51,6 +51,8 @@ class _ChargesFixesListState extends State<ChargesFixesList> {
       for (var chargeFixeJson in chargesFixesData) {
         ChargeFixes chargeFixe = ChargeFixes.fromJson(chargeFixeJson);
         chargesFixes.add(chargeFixe);
+
+        
         chargesFixesList.add(chargeFixeJson);
       }
 

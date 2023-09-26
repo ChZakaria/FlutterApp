@@ -120,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                         if (value) {
                           Navigator.pushNamed(
                             context,
-                           route.dashboard
+                           route.homePage
                           );
                         } else {
                           showLoginErrorDialog(context);
