@@ -40,6 +40,8 @@ dependencies:
   shared_preferences: ^2.2.1
   data_table_2: ^2.5.8
   cr_calendar: ^1.2.1
+  calendar_view: ^1.0.4
+  table_calendar: ^3.0.9
 
 
 dev_dependencies:

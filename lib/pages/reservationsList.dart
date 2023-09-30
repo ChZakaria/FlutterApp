@@ -1,124 +1,284 @@
-import 'package:cr_calendar/cr_calendar.dart';
-import 'package:flutter/material.dart';
-import 'package:my_web_project/widgets/day_item_widget.dart';
-import 'package:my_web_project/widgets/event_widget.dart';
-import 'package:my_web_project/widgets/week_days_widget.dart';
-import '../../api/apiService.dart' as client;
 
+
+import 'dart:collection';
+
+import 'package:table_calendar/table_calendar.dart';
+import 'package:flutter/material.dart';
+
+
+import '../models/reservation.dart';
 
 class ReservationsList extends StatefulWidget {
-  const ReservationsList({super.key});
-
   @override
-  State<ReservationsList> createState() => _ReservationsListState();
+  _ReservationsListState createState() => _ReservationsListState();
 }
 
 class _ReservationsListState extends State<ReservationsList> {
-
-   final eventColors = [
-  Color(0xff82D964),
-  Color(0xffE665FD),
-  Color(0xffF7980B),
-  Color(0xfff2d232),
-  Color(0xffFC6054),
-  Color(0xffBEBEBE),
-];
-
-   List<Map<String, dynamic>> reservationsList = [];
-  List<Map<String, dynamic>> displayedReservations = [];
-
-  late CrCalendarController _calendarController;
-  final _currentDate = DateTime.now();
+  late final ValueNotifier<List<Reservation>> _selectedEvents;
+  CalendarFormat _calendarFormat = CalendarFormat.month;
+  RangeSelectionMode _rangeSelectionMode = RangeSelectionMode
+      .toggledOff; // Can be toggled on/off by longpressing a date
+  DateTime _focusedDay = DateTime.now();
+  DateTime? _selectedDay;
+  DateTime? _rangeStart;
+  DateTime? _rangeEnd;
 
   @override
   void initState() {
-    // TODO: implement initState
-        _createExampleEvents();
-
     super.initState();
 
+    _selectedDay = _focusedDay;
+    _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
+  }
 
-    // client.ApiService.makeApiRequest(
-    //   'contrats',
-    //   'GET',
-    //   null,
-    // ).then((value) {
-    //   dynamic responseMap = value;
+  @override
+  void dispose() {
+    _selectedEvents.dispose();
+    super.dispose();
+  }
 
-    //   var reservationsData = responseMap["contrats"];
-      
+  List<Reservation> _getEventsForDay(DateTime day) {
+    // Implementation example
+    return kEvents[day] ?? [];
+  }
 
-    //   for (var reservationJson in reservationsData) {
-        
-        
-    //     reservationsList.add(reservationJson);
-    //   }
-    //   setState(() {
-    //     displayedReservations = List.from(reservationsList);
-    //   });
-    // });
+  List<Reservation> _getEventsForRange(DateTime start, DateTime end) {
+    // Implementation example
+    final days = daysInRange(start, end);
+
+    return [
+      for (final d in days) ..._getEventsForDay(d),
+    ];
+  }
+
+  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    if (!isSameDay(_selectedDay, selectedDay)) {
+      setState(() {
+        _selectedDay = selectedDay;
+        _focusedDay = focusedDay;
+        _rangeStart = null; // Important to clean those
+        _rangeEnd = null;
+        _rangeSelectionMode = RangeSelectionMode.toggledOff;
+      });
+
+      _selectedEvents.value = _getEventsForDay(selectedDay);
+    }
+  }
+
+  void _onRangeSelected(DateTime? start, DateTime? end, DateTime focusedDay) {
+    setState(() {
+      _selectedDay = null;
+      _focusedDay = focusedDay;
+      _rangeStart = start;
+      _rangeEnd = end;
+      _rangeSelectionMode = RangeSelectionMode.toggledOn;
+    });
+
+    // `start` or `end` could be null
+    if (start != null && end != null) {
+      _selectedEvents.value = _getEventsForRange(start, end);
+    } else if (start != null) {
+      _selectedEvents.value = _getEventsForDay(start);
+    } else if (end != null) {
+      _selectedEvents.value = _getEventsForDay(end);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CrCalendar(
-       firstDayOfWeek: WeekDay.monday,
-              eventsTopPadding: 32,
-              initialDate: _currentDate,
-              maxEventLines: 3,
-              controller: _calendarController,
-              forceSixWeek: true,
-              dayItemBuilder: (builderArgument) =>
-                  DayItemWidget(properties: builderArgument),
-              weekDaysBuilder: (day) => WeekDaysWidget(day: day),
-              eventBuilder: (drawer) => EventWidget(drawer: drawer),
-             
-              minDate: DateTime.now().subtract(const Duration(days: 1000)),
-              maxDate: DateTime.now().add(const Duration(days: 180)),
+      appBar: AppBar(
+        title: Text('Reservations'),
+      ),
+      body: Column(
+        children: [
+          TableCalendar<Reservation>(
+            firstDay: kFirstDay,
+            lastDay: kLastDay,
+            focusedDay: _focusedDay,
+            selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+            rangeStartDay: _rangeStart,
+            rangeEndDay: _rangeEnd,
+            calendarFormat: _calendarFormat,
+            rangeSelectionMode: _rangeSelectionMode,
+            eventLoader: _getEventsForDay,
+            startingDayOfWeek: StartingDayOfWeek.monday,
+            calendarBuilders: CalendarBuilders(
+              markerBuilder: (
+                context,
+                date,
+                events,
+              ) {
+                // Check the reservation state and return markers accordingly
+                List<Widget> markers = [];
+
+                for (var event in events) {
+                  if (event.statut == "done") {
+                    markers.add(
+                      const Positioned(
+                        right: 1,
+                        bottom: 1,
+                        child: Icon(
+                          Icons.check_circle,
+                          size: 10.0,
+                          color: Colors.green,
+                        ),
+                      ),
+                    );
+                  } else if (event.statut == "pending") {
+                    markers.add(
+                      const Positioned(
+                        right: 1,
+                        bottom: 1,
+                        child: Icon(
+                          Icons.pending,
+                          size: 10.0,
+                          color: Colors.orange,
+                        ),
+                      ),
+                    );
+                  }
+                }
+
+                return  Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                    children: markers,
+                 );
+              },
+            ),
+            calendarStyle: const CalendarStyle(
+              // Use `CalendarStyle` to customize the UI
+              outsideDaysVisible: false,
+              markerDecoration: BoxDecoration(
+                color: Color.fromARGB(255, 89, 8, 152),
+                shape: BoxShape.circle,
+              ),
+            ),
+            onDaySelected: _onDaySelected,
+            onRangeSelected: _onRangeSelected,
+            onFormatChanged: (format) {
+              if (_calendarFormat != format) {
+                setState(() {
+                  _calendarFormat = format;
+                });
+              }
+            },
+            onPageChanged: (focusedDay) {
+              _focusedDay = focusedDay;
+            },
+          ),
+          const SizedBox(height: 8.0),
+          Expanded(
+            child: ValueListenableBuilder<List<Reservation>>(
+              valueListenable: _selectedEvents,
+              builder: (context, value, _) {
+                return ListView.builder(
+                  itemCount: value.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 12.0,
+                        vertical: 4.0,
+                      ),
+                      decoration: BoxDecoration(
+                        color: value[index].statut == "done"
+                            ? Colors.green[200]
+                            : Colors.amber[100],
+                        // border: Border.all(),
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      child: ListTile(
+                        onTap: () => print('${value[index].id}'),
+                        leading: value[index].statut == "pending"
+                            ? Icon(
+                                Icons.pending_actions,
+                                color: Colors.orange,
+                              )
+                            : Icon(
+                                Icons.done_all,
+                                color: Colors.green,
+                              ),
+                        title: Text(
+                            'Reservation numero: ${value[index].id} ! de locataire: ${value[index].locataireId} pour vehicule ${value[index].vehiculeId}'),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
-
-  
-
-
-  void _createExampleEvents() {
-    final now = _currentDate;
-    _calendarController = CrCalendarController(
-      
-      events: [
-        CalendarEventModel(
-          name: '1 event',
-          begin: DateTime(now.year, now.month - 1, (now.day - 2).clamp(1, 28)),
-          end: DateTime(now.year, now.month, (now.day).clamp(1, 28)),
-          eventColor: eventColors[0],
-        ),
-        CalendarEventModel(
-          name: '2 event',
-          begin: DateTime(now.year, now.month - 1, (now.day - 2).clamp(1, 28)),
-          end: DateTime(now.year, now.month, (now.day + 2).clamp(1, 28)),
-          eventColor: eventColors[1],
-        ),
-        CalendarEventModel(
-          name: '3 event',
-          begin: DateTime(now.year, now.month, (now.day - 3).clamp(1, 28)),
-          end: DateTime(now.year, now.month + 1, (now.day + 4).clamp(1, 28)),
-          eventColor: eventColors[2],
-        ),
-        CalendarEventModel(
-          name: '4 event',
-          begin: DateTime(now.year, now.month - 1, (now.day).clamp(1, 28)),
-          end: DateTime(now.year, now.month + 1, (now.day + 5).clamp(1, 28)),
-          eventColor: eventColors[3],
-        ),
-        CalendarEventModel(
-          name: '5 event',
-          begin: DateTime(now.year, now.month + 1, (now.day + 1).clamp(1, 28)),
-          end: DateTime(now.year, now.month + 2, (now.day + 7).clamp(1, 28)),
-          eventColor: eventColors[4],
-        ),
-      ],
-    );
-  }
 }
+
+/// Example events.
+///
+/// Using a [LinkedHashMap] is highly recommended if you decide to use a map.
+final kEvents = LinkedHashMap<DateTime, List<Reservation>>(
+  equals: isSameDay,
+  hashCode: getHashCode,
+)..addAll(_kEventSource);
+
+final _kEventSource = Map.fromIterable(List.generate(50, (index) => index),
+    key: (item) => DateTime.utc(kFirstDay.year, kFirstDay.month, item * 5),
+    value: (item) => List.generate(
+          item % 4 + 1,
+          (index) => Reservation(
+              id: index,
+              vehiculeId: 2,
+              locataireId: 1,
+              dateDebut: DateTime.now().add(Duration(days: 0)),
+              dateFin: DateTime.now().add(Duration(days: index)),
+              statut: index.isEven ? "pending" : "done"),
+        ))
+  ..addAll({
+    kToday: [
+      Reservation(
+          id: 1,
+          vehiculeId: 2,
+          locataireId: 1,
+          dateDebut: DateTime.now().add(Duration(days: 0)),
+          dateFin: DateTime.now().add(Duration(days: 7)),
+          statut: "pending"),
+      Reservation(
+          id: 1,
+          vehiculeId: 2,
+          locataireId: 1,
+          dateDebut: DateTime.now().add(Duration(days: 0)),
+          dateFin: DateTime.now().add(Duration(days: 7)),
+          statut: "pending"),
+    ],
+  });
+// final _kEventSource=[
+// Reservation(id: 1, vehiculeId: 2, locataireId: 1,dateDebut: DateTime.now().add(Duration(days: 0)),dateFin: DateTime.now().add(Duration(days: 7)),statut: "pending"),
+// Reservation(id: 2, vehiculeId: 1, locataireId: 5,dateDebut: DateTime.now().add(Duration(days: 0)),dateFin: DateTime.now().add(Duration(days: 7)),statut: "pending"),
+// Reservation(id: 3, vehiculeId: 1, locataireId: 6,dateDebut: DateTime.now().add(Duration(days: 3)),dateFin: DateTime.now().add(Duration(days: 9)),statut: "pending"),
+// Reservation(id: 4, vehiculeId: 3, locataireId: 1,dateDebut: DateTime.now().add(Duration(days: 0)),dateFin: DateTime.now().add(Duration(days: 10)),statut: "done"),
+// Reservation(id: 5, vehiculeId: 1, locataireId: 7,dateDebut: DateTime.now().add(Duration(days: 0)),dateFin: DateTime.now().add(Duration(days: 11)),statut: "pending"),
+// Reservation(id: 6, vehiculeId: 1, locataireId: 1,dateDebut: DateTime.now().add(Duration(days: 3)),dateFin: DateTime.now().add(Duration(days: 30)),statut: "pending"),
+// Reservation(id: 7, vehiculeId: 4, locataireId: 8,dateDebut: DateTime.now().add(Duration(days: 4)),dateFin: DateTime.now().add(Duration(days: 31)),statut: "done"),
+// Reservation(id: 8, vehiculeId: 1, locataireId: 1,dateDebut: DateTime.now().add(Duration(days: 4)),dateFin: DateTime.now().add(Duration(days: 12)),statut: "pending"),
+// Reservation(id: 9, vehiculeId: 1, locataireId: 8,dateDebut: DateTime.now().add(Duration(days: 4)),dateFin: DateTime.now().add(Duration(days: 14)),statut: "canceled"),
+// Reservation(id: 10, vehiculeId: 1, locataireId: 1,dateDebut: DateTime.now().add(Duration(days: 6)),dateFin: DateTime.now().add(Duration(days: 16)),statut: "pending"),
+
+// ];
+
+int getHashCode(DateTime key) {
+  return key.day * 1000000 + key.month * 10000 + key.year;
+}
+
+/// Returns a list of [DateTime] objects from [first] to [last], inclusive.
+List<DateTime> daysInRange(DateTime first, DateTime last) {
+  final dayCount = last.difference(first).inDays + 1;
+  return List.generate(
+    dayCount,
+    (index) => DateTime.utc(first.year, first.month, first.day + index),
+  );
+}
+
+final kToday = DateTime.now();
+final kFirstDay = DateTime(kToday.year, kToday.month - 3, kToday.day);
+final kLastDay = DateTime(kToday.year, kToday.month + 3, kToday.day);
