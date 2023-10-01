@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:my_web_project/models/intermediaire.dart';
 import 'package:my_web_project/models/locataire.dart';
 import '../../api/apiService.dart' as client;
+import '../pages/additionalChargeList.dart';
 import '../models/contrat.dart';
 import 'package:http/http.dart' as http;
 
@@ -144,9 +145,7 @@ class _ContratListState extends State<ContratList> {
     });
   }
 
-  void _editContrat(int index) {
-
-
+  void _editContrat(int index) async {
     Contrat contrat = Contrat.fromJson(displayedContrats[index]);
 
     locataireIdController.text = contrat.locataireId.toString();
@@ -165,7 +164,7 @@ class _ContratListState extends State<ContratList> {
     kmRetourController.text = contrat.kmRetour.toString();
     observationController.text = contrat.observation;
 
-    showDialog(
+    Contrat? _contrat = await showDialog<Contrat>(
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(builder: (context, setState) {
@@ -423,7 +422,7 @@ class _ContratListState extends State<ContratList> {
                         crLe: DateTime.now().toString(),
                         misJourLe: DateTime.now().toString());
 
-                        print(contrat.toJson());
+                    print(contrat.toJson());
 
                     client.ApiService.makeApiRequest(
                       'contrats/$id',
@@ -431,13 +430,10 @@ class _ContratListState extends State<ContratList> {
                       contrat.toJson(),
                     ).then((response) {
                       print(response);
-                      setState(() {
-                        displayedContrats[index] = contrat.toJson();
-                      });
 
                       print('contrat details updated');
 
-                      Navigator.of(context).pop();
+                      Navigator.of(context).pop(contrat);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('Details updated'),
@@ -460,6 +456,11 @@ class _ContratListState extends State<ContratList> {
         });
       },
     );
+    if (_contrat != null) {
+      setState(() {
+        displayedContrats[index] = _contrat.toJson();
+      });
+    }
   }
 
   void _deleteContrat(int index) {
@@ -507,8 +508,8 @@ class _ContratListState extends State<ContratList> {
     );
   }
 
-  void _addNewContrat() {
-    showDialog(
+  void _addNewContrat() async {
+    Contrat? contrat = await showDialog(
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(builder: (context, setState) {
@@ -757,13 +758,10 @@ class _ContratListState extends State<ContratList> {
                       contrat.toJson(),
                     ).then((response) {
                       print(response);
-                      setState(() {
-                        displayedContrats.add(contrat.toJson());
-                      });
 
                       print('contrat details added');
 
-                      Navigator.of(context).pop();
+                      Navigator.of(context).pop(contrat);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('Contrat added'),
@@ -786,6 +784,12 @@ class _ContratListState extends State<ContratList> {
         });
       },
     );
+
+    if (contrat != null) {
+      setState(() {
+        displayedContrats.add(contrat.toJson());
+      });
+    }
   }
 
   void _searchContrats(String query) {
@@ -835,6 +839,16 @@ class _ContratListState extends State<ContratList> {
                 ),
               ),
             ),
+          ),
+          // Add a button to navigate to AdditionalChargeList
+          IconButton(
+            icon: Icon(Icons.view_list), // You can use any icon you prefer
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AdditionalChargeList()),
+              );
+            },
           ),
         ],
       ),
@@ -886,6 +900,7 @@ class MyDataTableSource extends DataTableSource {
   @override
   DataRow getRow(int index) {
     final contrat = contrats[index];
+
     return DataRow(
       onSelectChanged: (bool? selected) {
         getIndex(index);
