@@ -1,3 +1,4 @@
+import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:my_web_project/models/locataire.dart';
@@ -376,6 +377,34 @@ class _LocatairesListState extends State<LocatairesList> {
     );
   }
 
+  _exportToExcel() {
+    final excel = Excel.createExcel();
+    final sheet = excel.sheets[excel.getDefaultSheet() as String];
+    sheet!.setColWidth(2, 50);
+    sheet.setColAutoFit(3);
+
+   // Assuming displayedLocataires is List<Map<String, dynamic>>
+        for (int i = 0; i < displayedLocataires.length; i++) {
+          Map<String, dynamic> row = displayedLocataires[i];
+          int columnIndex = 2; // Start from the 3rd column
+
+          row.forEach((key, value) {
+            sheet.cell(CellIndex.indexByColumnRow(columnIndex: columnIndex, rowIndex: i + 3)).value = value;
+            columnIndex++;
+          });
+        }
+
+
+    // sheet.cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 3)).value =
+    //     'Text string';
+
+    // sheet.cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: 4)).value =
+    //     'Text string Text string Text string Text string Text string Text string Text string Text string';
+
+    excel.save();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -405,15 +434,18 @@ class _LocatairesListState extends State<LocatairesList> {
         showCheckboxColumn: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.edit, color: Colors.green),
+            icon: Icon(Icons.print, color: Colors.red),
             onPressed: () {},
           ),
           IconButton(
             icon: Icon(
-              Icons.delete,
-              color: Colors.red,
+              Icons.stacked_bar_chart,
+              color: Colors.green,
             ),
-            onPressed: () {},
+            onPressed: () {
+
+              _exportToExcel();
+            },
           ),
           IconButton(
             icon: Icon(Icons.update, color: Colors.purple),

@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-
 import 'package:my_web_project/routes/route.dart' as route;
 
 class Dashboard extends StatelessWidget {
-  //
-  //
-
-  // use this to push to name route defined in route file
-  pushToRoute(BuildContext context, routeName) {
+  void pushToRoute(BuildContext context, routeName) {
     Navigator.pushNamed(
       context,
       routeName,
@@ -84,40 +79,41 @@ class Dashboard extends StatelessWidget {
     },
   ];
 
-  // method returns Elevated button to avoid repetitive code
-
-  ElevatedButton _gridButton(icon, color, name, route, context) {
-    return ElevatedButton(
-      onPressed: () {
-        // Handle  button press
-        pushToRoute(context, route);
-      },
-      style: ElevatedButton.styleFrom(
-        
-        backgroundColor: color,
-        padding: const EdgeInsets.all(8.0), // Smaller padding
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
+  Container _gridButton(icon, color, name, route, context) {
+    return Container(
+      height: 60,
+      width: 80,
+      child: ElevatedButton(
+        onPressed: () {
+          pushToRoute(context, route);
+        },
+        style: ElevatedButton.styleFrom(
+          
+          backgroundColor: color,
+          padding: const EdgeInsets.all(8.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          elevation: 5,
         ),
-        elevation: 5, // Add elevation
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            size: 15.0,
-            color: Colors.white, // Text and icon color
-          ), // Smaller icon
-          const SizedBox(height: 4.0), // Smaller gap
-          Text(
-            name,
-            style: TextStyle(
-              fontSize: 10.0,
-              color: Colors.white, // Text color
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 15.0,
+              color: Colors.white,
             ),
-          ), // Smaller text
-        ],
+            const SizedBox(height: 4.0),
+            Text(
+              name,
+              style: TextStyle(
+                fontSize: 10.0,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -125,20 +121,15 @@ class Dashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-          width: double.infinity,
-          child: GridView.count(
-            shrinkWrap: true,
-            crossAxisCount: 5, // Adjust the number of columns as needed
-            padding: EdgeInsets.all(5.0),
-            mainAxisSpacing: 4.0,
-            crossAxisSpacing: 4.0,
-            childAspectRatio: 3, // Adjust the aspect ratio as needed
-            children: [
-              ...listOfButtons.map((e) => _gridButton(
-                  e["icon"], e["color"], e["name"], e["route"], context))
-            ],
-          ),);
-        
+      padding: EdgeInsets.all(10),
       
+      child:  Wrap(
+        spacing: 4.0,
+        runSpacing: 4.0,
+        alignment: WrapAlignment.center,
+        children: listOfButtons.map((e) => _gridButton(
+          e["icon"], e["color"], e["name"], e["route"], context)).toList(),
+      ),
+    );
   }
 }
