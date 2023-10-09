@@ -27,6 +27,11 @@ class _ChargesFixesListState extends State<ChargesFixesList> {
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  List<String> descriptions = [];
+  String? selectedDescription;
+  DateTime? startDate;
+  DateTime? endDate;
+
   int? selectedIndex = -1;
   String? bearerToken;
 
@@ -52,9 +57,16 @@ class _ChargesFixesListState extends State<ChargesFixesList> {
         ChargeFixes chargeFixe = ChargeFixes.fromJson(chargeFixeJson);
         chargesFixes.add(chargeFixe);
 
-        
         chargesFixesList.add(chargeFixeJson);
+
+        // Populate descriptions list
+        if (!descriptions.contains(chargeFixe.description)) {
+          descriptions.add(chargeFixe.description);
+        }
       }
+
+      // Set initial selected description (optional)
+      selectedDescription = descriptions.isNotEmpty ? descriptions[0] : null;
 
       setState(() {
         displayedChargesFixes = List.from(chargesFixesList);
@@ -66,6 +78,10 @@ class _ChargesFixesListState extends State<ChargesFixesList> {
     setState(() {
       selectedIndex = index;
     });
+
+    startDate = null;
+    endDate = null;
+    _applyFilters();
   }
 
   void _editChargeFixe(int index) {
@@ -79,7 +95,6 @@ class _ChargesFixesListState extends State<ChargesFixesList> {
     dateFinController.text = chargeFixe['date_fin'].toString();
     mavertirAvantController.text = chargeFixe['mavertir_avant'].toString();
 
-   
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -494,70 +509,175 @@ class _ChargesFixesListState extends State<ChargesFixesList> {
     );
   }
 
+  void _applyFilters() {
+    setState(() {
+      displayedChargesFixes = chargesFixesList.where((chargeFixe) {
+        bool matchesDescription = selectedDescription == null ||
+            chargeFixe['description'] == selectedDescription;
+
+       
+
+        return matchesDescription;
+
+      }).toList();
+    });
+  }
+
+   void _applyDateFilters() {
+    setState(() {
+      displayedChargesFixes = chargesFixesList.where((chargeFixe) {
+       
+
+        DateTime? dateDebut = DateTime.parse(chargeFixe['date_debut']);
+        DateTime? dateFin = DateTime.parse(chargeFixe['date_fin']);
+
+
+        bool matchesDateRange = (startDate == null || chargeFixe['date_debut'] == null || chargeFixe['date_fin'] == null) ||
+            (startDate == null || dateDebut.isAfter(startDate!)) &&
+                (endDate == null || dateFin.isBefore(endDate!));
+
+        return  matchesDateRange;
+
+      }).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        actions: [
-          Flexible(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                controller: searchController,
-                onChanged: _searchChargesFixes,
-                decoration: InputDecoration(
-                  hintText: 'Search...',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-          ),
-        ],
+        actions: [],
       ),
-      body: PaginatedDataTable(
-        header: Text('Charges Fixes List'),
-        showFirstLastButtons: true,
-        rowsPerPage: 5,
-        arrowHeadColor: Colors.purple,
-        showCheckboxColumn: true,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.edit, color: Colors.green),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.delete,
-              color: Colors.red,
+      body: Column(
+        children: [
+          Flexible(
+            child: Column(
+              children: [
+                Container(
+                  width: MediaQuery.sizeOf(context).width * 0.5,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      controller: searchController,
+                      onChanged: _searchChargesFixes,
+                      decoration: InputDecoration(
+                        hintText: 'Search...',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ),
+                DropdownButton<String>(
+                  value: selectedDescription,
+                  onChanged: (newValue) {
+                    setState(() {
+                      selectedDescription = newValue;
+                      _applyFilters();
+                    });
+                  },
+                  items: descriptions.map((String description) {
+                    return DropdownMenuItem<String>(
+                      value: description,
+                      child: Text(description),
+                    );
+                  }).toList(),
+                ),
+                Row(
+                  children: [
+                    Text('Start Date: '),
+                    TextButton(
+                      onPressed: () async {
+                        final DateTime? picked = await showDatePicker(
+                          context: context,
+                          initialDate: startDate ?? DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2101),
+                        );
+                        if (picked != null && picked != startDate) {
+                          setState(() {
+                            startDate = picked;
+                            _applyDateFilters();
+                          });
+                        }
+                      },
+                      child: Text(
+                        startDate != null
+                            ? startDate.toString()
+                            : 'Select date',
+                      ),
+                    ),
+                    SizedBox(width: 20),
+                    Text('End Date: '),
+                    TextButton(
+                      onPressed: () async {
+                        final DateTime? picked = await showDatePicker(
+                          context: context,
+                          initialDate: endDate ?? DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2101),
+                        );
+                        if (picked != null && picked != endDate) {
+                          setState(() {
+                            endDate = picked;
+                            _applyDateFilters();
+                          });
+                        }
+                      },
+                      child: Text(
+                        endDate != null ? endDate.toString() : 'Select date',
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            onPressed: () {},
           ),
-          IconButton(
-            icon: Icon(Icons.update, color: Colors.purple),
-            onPressed: () {},
+          PaginatedDataTable(
+            header: Text('Charges Fixes List'),
+            showFirstLastButtons: true,
+            rowsPerPage: 5,
+            arrowHeadColor: Colors.purple,
+            showCheckboxColumn: true,
+            actions: [
+              IconButton(
+                icon: Icon(Icons.edit, color: Colors.green),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.delete,
+                  color: Colors.red,
+                ),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: Icon(Icons.update, color: Colors.purple),
+                onPressed: () {},
+              ),
+            ],
+            columns: const [
+              DataColumn(label: Text('id')),
+              DataColumn(label: Text('Vehicule Id')),
+              DataColumn(label: Text('Montant')),
+              DataColumn(label: Text('Description')),
+              DataColumn(label: Text('Fournisseur')),
+              DataColumn(label: Text('Date debut')),
+              DataColumn(label: Text('Date fin')),
+              DataColumn(label: Text("m.avant")),
+              DataColumn(label: Text("Cree le")),
+              DataColumn(label: Text('Actions')),
+            ],
+            source: MyDataTableSource(
+              chargesFixes: displayedChargesFixes,
+              editChargeFixe: _editChargeFixe,
+              deleteChargeFixe: _deleteChargeFixe,
+              updateChargeFixe: _updateChargeFixe,
+              getIndex: _getIndex,
+              selectedIndex: selectedIndex,
+            ),
           ),
         ],
-        columns: const [
-          DataColumn(label: Text('id')),
-          DataColumn(label: Text('Vehicule Id')),
-          DataColumn(label: Text('Montant')),
-          DataColumn(label: Text('Description')),
-          DataColumn(label: Text('Fournisseur')),
-          DataColumn(label: Text('Date debut')),
-          DataColumn(label: Text('Date fin')),
-          DataColumn(label: Text("m.avant")),
-          DataColumn(label: Text("Cree le")),
-          DataColumn(label: Text('Actions')),
-        ],
-        source: MyDataTableSource(
-          chargesFixes: displayedChargesFixes,
-          editChargeFixe: _editChargeFixe,
-          deleteChargeFixe: _deleteChargeFixe,
-          updateChargeFixe: _updateChargeFixe,
-          getIndex: _getIndex,
-          selectedIndex: selectedIndex,
-        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addNewChargeFixe,
