@@ -44,6 +44,8 @@ dependencies:
   table_calendar: ^3.0.9
   easy_sidemenu: ^0.5.0
   excel: ^2.1.0
+  pdf: ^3.10.4
+  printing: ^5.11.0
 
 
 dev_dependencies:

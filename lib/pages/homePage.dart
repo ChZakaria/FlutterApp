@@ -486,26 +486,18 @@ class _MyHomePageState extends State<MyHomePage> {
                 for (var event in events) {
                   if (event.statut == "done") {
                     markers.add(
-                      const Positioned(
-                        right: 1,
-                        bottom: 1,
-                        child: Icon(
-                          Icons.check_circle,
-                          size: 10.0,
-                          color: Colors.green,
-                        ),
+                      Icon(
+                        Icons.check_circle,
+                        size: 10.0,
+                        color: Colors.green,
                       ),
                     );
                   } else if (event.statut == "pending") {
                     markers.add(
-                      const Positioned(
-                        right: 1,
-                        bottom: 1,
-                        child: Icon(
-                          Icons.pending,
-                          size: 10.0,
-                          color: Colors.orange,
-                        ),
+                      Icon(
+                        Icons.pending,
+                        size: 10.0,
+                        color: Colors.orange,
                       ),
                     );
                   }

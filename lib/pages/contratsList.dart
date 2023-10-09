@@ -6,6 +6,9 @@ import 'package:my_web_project/models/locataire.dart';
 import '../../api/apiService.dart' as client;
 import '../models/contrat.dart';
 import 'package:http/http.dart' as http;
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 class ContratList extends StatefulWidget {
   @override
@@ -461,6 +464,74 @@ class _ContratListState extends State<ContratList> {
       },
     );
   }
+  Future<void> _printInvoice(Map<String, dynamic> contractData) async {
+  final pdf = pw.Document();
+
+   pdf.addPage(pw.Page(build: (pw.Context context) {
+    return buildInvoice(contractData);
+  }));
+
+  await Printing.layoutPdf(
+    onLayout: (PdfPageFormat format) async => pdf.save(),
+  );
+}
+
+  pw.Widget buildInvoice(Map<String, dynamic> contractData) {
+  // Extract your contract data here
+
+  
+ 
+  return pw.Container(
+    padding: pw.EdgeInsets.all(16),
+    decoration: pw.BoxDecoration(
+      border: pw.Border.all(width: 1, color: PdfColor.fromInt(0xFF000000)),
+    ),
+    child: pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Text('Car Rental Invoice', style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold)),
+        pw.SizedBox(height: 20),
+        pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+          children: [
+            pw.Text('Invoice ID: ${contractData['id']}'),
+            pw.Text('Date: ${DateTime.now().toLocal()}'),
+          ],
+        ),
+        pw.Divider(thickness: 2),
+        pw.SizedBox(height: 20),
+        pw.Table(
+          children: [
+            pw.TableRow(
+              children: [
+                pw.Text('Description', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                pw.Text('Amount', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+              ],
+            ),
+            pw.TableRow(
+              children: [
+                pw.Text('Car Rental', style: pw.TextStyle(fontWeight: pw.FontWeight.normal)),
+                pw.Text('\$${contractData['montant_total']}', style: pw.TextStyle(fontWeight: pw.FontWeight.normal)),
+              ],
+            ),
+            // Add more rows for additional items if needed
+          ],
+        ),
+        pw.SizedBox(height: 20),
+        pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+          children: [
+            pw.Text('Total Amount:', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+            pw.Text('\$${contractData['montant_total']}', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+          ],
+        ),
+      ],
+    ),
+  );
+
+
+}
+
 
   void _deleteContrat(int index) {
     showDialog(
@@ -857,6 +928,7 @@ class _ContratListState extends State<ContratList> {
           editContrat: _editContrat,
           deleteContrat: _deleteContrat,
           getIndex: _getIndex,
+          printInvoice: _printInvoice,
           selectedIndex: selectedIndex,
         ),
       ),
@@ -872,6 +944,7 @@ class MyDataTableSource extends DataTableSource {
   final List<Map<String, dynamic>> contrats;
   final Function(int) editContrat;
   final Function(int) deleteContrat;
+  final Future<void> Function(Map<String, dynamic>)  printInvoice;
   final Function(int) getIndex;
   final int? selectedIndex;
 
@@ -879,6 +952,7 @@ class MyDataTableSource extends DataTableSource {
     required this.contrats,
     required this.editContrat,
     required this.deleteContrat,
+    required this.printInvoice,
     required this.getIndex,
     required this.selectedIndex,
   });
@@ -912,6 +986,13 @@ class MyDataTableSource extends DataTableSource {
                   color: Colors.red,
                 ),
                 onPressed: () => deleteContrat(index),
+              ),
+               IconButton(
+                icon: Icon(
+                  Icons.print,
+                  color: Colors.blueGrey,
+                ),
+                onPressed: () => printInvoice(contrats[index]),
               ),
             ],
           ),
